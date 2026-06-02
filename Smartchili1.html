@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<title>SmartChili Protect</title>
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f0f4f0;
+  color: #1c2b1c;
+  padding-bottom: 75px;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* ── NAVBAR ── */
+.nav {
+  background: #1a4d1a;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.nav-title { color: #fff; font-size: 18px; font-weight: 700; }
+.nav-title span { color: #f5c518; }
+.nav-icon { color: #fff; font-size: 20px; display: flex; gap: 14px; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  background: #1a4d1a;
+  padding: 0 6px 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1;
+  min-width: 75px;
+  padding: 10px 4px;
+  background: transparent;
+  color: rgba(255,255,255,0.65);
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tab.act { background: #fff; color: #1a4d1a; }
+
+/* ── WRAP & PAGE ── */
+.wrap { max-width: 500px; margin: 0 auto; padding: 12px 12px 0; }
+.page { display: none; flex-direction: column; gap: 12px; }
+.page.act { display: flex; }
+
+/* ── CARD ── */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.ctitle { font-size: 15px; font-weight: 700; color: #1a4d1a; margin-bottom: 12px; }
+
+/* ── FORM ── */
+.fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.fr { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fg label { font-size: 12px; font-weight: 600; color: #1a4d1a; display: block; }
+
+/* INPUT - khusus iPhone fix */
+.fg input[type="text"],
+.fg input[type="number"],
+.fg input[type="date"],
+.fg select,
+.fg textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1.5px solid #b8d8b8;
+  border-radius: 10px;
+  font-size: 16px; /* WAJIB 16px di iOS agar tidak auto-zoom */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1c2b1c;
+  background: #fff;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  display: block;
+  max-width: 100%;
+}
+.fg input:focus,
+.fg select:focus,
+.fg textarea:focus {
+  border-color: #2d7a2d;
+  box-shadow: 0 0 0 3px rgba(45,122,45,0.15);
+}
+.fg select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232d7a2d' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 34px;
+}
+.fg textarea { resize: vertical; min-height: 64px; }
+
+/* SLIDER - iOS fix */
+.fg input[type="range"] {
+  width: 100%;
+  -webkit-appearance: auto;
+  appearance: auto;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 4px 0;
+  accent-color: #2d7a2d;
+  height: 32px;
+  cursor: pointer;
+}
+.hint { display: flex; justify-content: space-between; font-size: 10px; margin-top: 2px; }
+
+/* CHECKBOX - iOS fix */
+.cg { display: flex; flex-direction: column; gap: 8px; }
+.cl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #ddeadd;
+  background: #fff;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  min-height: 44px; /* Apple HIG minimum touch target */
+}
+.cl:active { background: #e8f5e8; }
+.cl input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #2d7a2d;
+  flex-shrink: 0;
+  cursor: pointer;
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+
+/* TOMBOL - iOS fix */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 12px;
+  background: #1a4d1a;
+  color: #fff;
+  border: none;
+  border-radius: 11px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  min-height: 50px; /* minimum touch target */
+  box-shadow: 0 3px 10px rgba(26,77,26,0.30);
+}
+.btn:active { background: #2d7a2d; transform: scale(0.98); }
+
+/* ── HASIL CARD ── */
+.hasil {
+  display: none;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-left: 4px solid #2d7a2d;
+}
+
+/* ── G4 GRID ── */
+.g4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.g4i { background: #e8f5e8; border-radius: 8px; padding: 9px 10px; }
+.g4i small { font-size: 10px; color: #5a6e5a; display: block; }
+.g4i strong { font-size: 12px; font-weight: 700; color: #1a4d1a; word-break: break-word; display: block; margin-top: 2px; }
+
+/* ── METER ── */
+.mbox { margin-bottom: 12px; }
+.mhdr { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #1a4d1a; margin-bottom: 5px; }
+.mtrack { height: 14px; background: #dceadc; border-radius: 99px; overflow: hidden; }
+.mfill { height: 100%; border-radius: 99px; background: #2d7a2d; transition: width .5s; }
+.mfill.warn { background: #fb8c00; }
+.mfill.danger { background: #e53935; }
+.mlbl { margin-top: 5px; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; text-align: center; background: #d4edda; color: #1a4d1a; }
+.mlbl.warn { background: #fff3e0; color: #e65100; }
+.mlbl.danger { background: #fde8e8; color: #e53935; }
+
+/* ── DIAGNOSA / REKOM ── */
+.dbox { background: #fff8f0; border: 1px solid #fde0c0; border-radius: 9px; padding: 11px 12px; margin-bottom: 10px; }
+.rbox { background: #e8f5e8; border: 1px solid #b2d8b2; border-radius: 9px; padding: 11px 12px; margin-bottom: 10px; }
+.boxt { font-size: 12px; font-weight: 700; color: #1a4d1a; margin-bottom: 7px; }
+.dbox ul, .rbox ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.dbox li, .rbox li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.45; }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.dot.g { background: #2d7a2d; }
+.dot.r { background: #e53935; }
+.dot.o { background: #fb8c00; }
+.dot.y { background: #fdd835; }
+.blv { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px; margin-left: 2px; }
+.blv.r { background: #fde8e8; color: #e53935; }
+.blv.o { background: #fff3e0; color: #e65100; }
+.blv.g { background: #d4edda; color: #1a4d1a; }
+
+/* ── BANNER STATUS ── */
+.banner { padding: 9px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: center; margin-top: 10px; }
+.banner.ok { background: #d4edda; color: #1a4d1a; border: 1px solid #a8d4a8; }
+.banner.warn { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+.banner.danger { background: #fde8e8; color: #e53935; border: 1px solid #ffcdd2; }
+
+/* ── INFO ROWS ── */
+.rows { border: 1px solid #ddeadd; border-radius: 9px; overflow: hidden; margin-bottom: 12px; }
+.row { display: flex; justify-content: space-between; align-items: center; padding: 10px 13px; border-bottom: 1px solid #ddeadd; font-size: 13px; flex-wrap: wrap; gap: 4px; }
+.row:last-child { border-bottom: none; }
+.row.hl { background: #e8f5e8; font-weight: 600; }
+.row strong { color: #1a4d1a; }
+
+/* ── TIPS ── */
+.tbox { background: #d4edda; border: 1px solid #a8d4a8; border-radius: 9px; padding: 12px 13px; }
+.trow { font-size: 13px; padding: 3px 0; }
+
+/* ── GRAFIK ── */
+.csub { font-size: 11px; color: #5a6e5a; margin-bottom: 10px; }
+.cleg { display: flex; gap: 14px; margin-top: 9px; justify-content: center; font-size: 11px; color: #5a6e5a; }
+.ldot { width: 13px; height: 9px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 3px; }
+
+/* ── RINGKAS ── */
+.rkbox { background: #e8f5e8; border: 1px solid #b2d8b2; border-radius: 9px; padding: 12px 13px; margin-bottom: 11px; }
+.rkrow { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); flex-wrap: wrap; gap: 4px; }
+.rkrow:last-child { border-bottom: none; }
+.rkrow.minus strong { color: #e53935; }
+.rkrow.total { border-top: 2px solid #a8d4a8; padding-top: 8px; margin-top: 3px; font-weight: 700; }
+.rkrow.total strong { color: #2d7a2d; font-size: 14px; }
+
+/* ── KALKULATOR ── */
+.ktbl { background: #e8f5e8; border-radius: 9px; padding: 12px; display: flex; flex-direction: column; }
+.krow { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.06); flex-wrap: wrap; gap: 4px; }
+.krow:last-child { border-bottom: none; }
+.krow.minus strong { color: #e53935; }
+.krow.profit { border-top: 2px solid #a8d4a8; padding-top: 9px; margin-top: 3px; font-weight: 700; }
+.krow.profit strong { color: #2d7a2d; font-size: 14px; }
+
+/* ── BOTTOM NAV ── */
+.bnav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: #fff;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.12);
+  z-index: 999;
+  padding-bottom: env(safe-area-inset-bottom); /* iPhone notch support */
+}
+.bn {
+  flex: 1;
+  padding: 10px 4px 8px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+  line-height: 1.3;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 50px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.bn small { font-size: 11px; display: block; }
+.bn.act { color: #2d7a2d; }
+
+/* ── UTILS ── */
+.gt { color: #2d7a2d !important; }
+.ot { color: #fb8c00 !important; }
+.rt { color: #e53935 !important; }
+.ha-btn-custom {
+  display: block; width: 100%; padding: 13px; color: #fff; border: none;
+  border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+  text-align: center; margin-top: 11px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-appearance: none; appearance: none;
+  touch-action: manipulation; min-height: 48px;
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="nav">
+  <div class="nav-title">Smart<span>Chili</span> Protect</div>
+  <div class="nav-icon">&#128276; &#128100;</div>
+</div>
+
+<!-- TABS ATAS -->
+<div class="tabs">
+  <button class="tab act" onclick="goTab('deteksi',0)">&#128269; Deteksi</button>
+  <button class="tab" onclick="goTab('kalender',1)">&#128197; Kalender</button>
+  <button class="tab" onclick="goTab('analisis',2)">&#128202; Analisis</button>
+  <button class="tab" onclick="goTab('ekonomi',3)">&#128176; Ekonomi</button>
+</div>
+
+<div class="wrap">
+
+<!-- ====== TAB DETEKSI ====== -->
+<div id="pg-deteksi" class="page act">
+  <div class="card">
+    <div class="ctitle">&#128221; Input Data Tanaman</div>
+
+    <div class="fr">
+      <div class="fg">
+        <label for="d-petani">Nama Petani</label>
+        <input type="text" id="d-petani" placeholder="Budi Santoso" autocomplete="off"/>
+      </div>
+      <div class="fg">
+        <label for="d-lokasi">Lokasi Kebun</label>
+        <input type="text" id="d-lokasi" placeholder="Magelang, Jateng" autocomplete="off"/>
+      </div>
+    </div>
+
+    <div class="fr">
+      <div class="fg">
+        <label for="d-jenis">Jenis Tanaman</label>
+        <select id="d-jenis">
+          <option>Cabai Merah</option>
+          <option>Cabai Rawit</option>
+          <option>Cabai Keriting</option>
+          <option>Cabai Hijau</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label for="d-umur">Umur Tanaman (hari)</label>
+        <input type="number" id="d-umur" placeholder="45" min="1" max="365" inputmode="numeric"/>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Tingkat Serangan: <strong id="d-val">30%</strong></label>
+      <input type="range" id="d-serangan" min="0" max="100" value="30"
+        oninput="document.getElementById('d-val').textContent=this.value+'%'"/>
+      <div class="hint">
+        <span style="color:#2d7a2d">Rendah 0-39%</span>
+        <span style="color:#fb8c00">Sedang 40-69%</span>
+        <span style="color:#e53935">Tinggi 70-100%</span>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Gejala yang Terlihat</label>
+      <div class="cg">
+        <label class="cl"><input type="checkbox" id="cb-a"/> &#127820; Bercak hitam — Antraknosa</label>
+        <label class="cl"><input type="checkbox" id="cb-k"/> &#127833; Daun keriting — Kutu Daun</label>
+        <label class="cl"><input type="checkbox" id="cb-t"/> &#127834; Daun pucat — Thrips</label>
+        <label class="cl"><input type="checkbox" id="cb-l"/> &#128308; Tanaman layu — Fusarium</label>
+        <label class="cl"><input type="checkbox" id="cb-v"/> &#128311; Daun mosaik — Virus CMV</label>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label for="d-catatan">Catatan Tambahan</label>
+      <textarea id="d-catatan" placeholder="Deskripsikan kondisi tanaman..."></textarea>
+    </div>
+
+    <button class="btn" onclick="doDeteksi()">&#128269; Analisis Sekarang</button>
+  </div>
+
+  <!-- HASIL DETEKSI -->
+  <div id="hd" class="hasil">
+    <div class="ctitle">&#128203; Hasil Analisis Deteksi</div>
+    <div class="g4">
+      <div class="g4i"><small>Petani</small><strong id="hd-petani">-</strong></div>
+      <div class="g4i"><small>Lokasi</small><strong id="hd-lokasi">-</strong></div>
+      <div class="g4i"><small>Jenis</small><strong id="hd-jenis">-</strong></div>
+      <div class="g4i"><small>Umur</small><strong id="hd-umur">-</strong></div>
+    </div>
+    <div class="mbox">
+      <div class="mhdr"><span>Tingkat Serangan</span><strong id="hd-pct">0%</strong></div>
+      <div class="mtrack"><div class="mfill" id="hd-fill" style="width:0%"></div></div>
+      <div class="mlbl" id="hd-lbl">-</div>
+    </div>
+    <div class="dbox"><div class="boxt">&#129658; Diagnosa</div><ul id="hd-diag"></ul></div>
+    <div class="rbox"><div class="boxt">&#128138; Rekomendasi</div><ul id="hd-rekom"></ul></div>
+    <div class="banner" id="hd-ban">-</div>
+  </div>
+</div>
+
+<!-- ====== TAB KALENDER ====== -->
+<div id="pg-kalender" class="page">
+  <div class="card">
+    <div class="ctitle">&#128221; Input Jadwal Tanam</div>
+    <div class="fr">
+      <div class="fg">
+        <label for="k-tgl">Tanggal Mulai Tanam</label>
+        <input type="date" id="k-tgl"/>
+      </div>
+      <div class="fg">
+        <label for="k-jenis">Jenis Cabai</label>
+        <select id="k-jenis">
+          <option value="90">Cabai Merah (~90 hari)</option>
+          <option value="75">Cabai Rawit (~75 hari)</option>
+          <option value="85">Cabai Keriting (~85 hari)</option>
+          <option value="100">Cabai Besar (~100 hari)</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label for="k-harga">Prediksi Harga (Rp/kg)</label>
+        <input type="number" id="k-harga" value="42000" step="1000" inputmode="numeric"/>
+      </div>
+      <div class="fg">
+        <label for="k-luas">Luas Lahan (Ha)</label>
+        <input type="number" id="k-luas" value="1" step="0.1" min="0.1" inputmode="decimal"/>
+      </div>
+    </div>
+    <button class="btn" onclick="doKalender()">&#128197; Hitung Jadwal</button>
+  </div>
+
+  <!-- HASIL KALENDER -->
+  <div id="hk" class="hasil">
+    <div class="ctitle">&#128197; Hasil Jadwal Tanam</div>
+    <div class="rows">
+      <div class="row"><span>Tanggal Mulai Tanam</span><strong id="hk-tgl">-</strong></div>
+      <div class="row"><span>Estimasi Panen</span><strong id="hk-panen">-</strong></div>
+      <div class="row"><span>Lama Tanam</span><strong id="hk-lama">-</strong></div>
+      <div class="row"><span>Sisa Hari</span><strong id="hk-sisa">-</strong></div>
+      <div class="row hl"><span>Harga Jual</span><strong id="hk-harga">-</strong></div>
+      <div class="row hl"><span>Estimasi Produksi</span><strong id="hk-prod">-</strong></div>
+      <div class="row hl"><span>Estimasi Keuntungan</span><strong id="hk-untung">-</strong></div>
+    </div>
+    <div class="tbox">
+      <div class="boxt" style="margin-bottom:8px">&#128204; Tips Musim Tanam</div>
+      <div class="trow">&#128994; Rekomendasi: <strong id="hk-t1">-</strong></div>
+      <div class="trow">&#128994; Risiko Hama: <strong id="hk-t2">-</strong></div>
+      <div class="trow">&#128994; Kondisi: <strong id="hk-t3">-</strong></div>
+    </div>
+  </div>
+
+  <!-- GRAFIK -->
+  <div class="card">
+    <div class="ctitle">&#128200; Prediksi Harga Cabai 5 Tahun</div>
+    <p class="csub">Berdasarkan tren pasar &amp; inflasi 7% per tahun</p>
+    <canvas id="priceChart" height="200"></canvas>
+    <div class="cleg">
+      <span><span class="ldot" style="background:#2d7a2d"></span>Historis</span>
+      <span><span class="ldot" style="background:#f5c518;border:2px dashed #c8a000"></span>Prediksi</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TAB ANALISIS ====== -->
+<div id="pg-analisis" class="page">
+  <div class="card">
+    <div class="ctitle">&#128221; Input Data Analisis</div>
+    <div class="fr">
+      <div class="fg">
+        <label for="a-prod">Produksi (Ton/Ha)</label>
+        <input type="number" id="a-prod" value="8" step="0.5" min="1" inputmode="decimal"/>
+      </div>
+      <div class="fg">
+        <label for="a-harga">Harga Jual (Rp/kg)</label>
+        <input type="number" id="a-harga" value="42000" step="1000" inputmode="numeric"/>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label for="a-luas">Luas Lahan (Ha)</label>
+        <input type="number" id="a-luas" value="1" step="0.1" min="0.1" inputmode="decimal"/>
+      </div>
+      <div class="fg">
+        <label for="a-biaya">Biaya Produksi (Rp)</label>
+        <input type="number" id="a-biaya" value="50000000" step="1000000" inputmode="numeric"/>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Risiko Kerugian Hama: <strong id="a-val">25%</strong></label>
+      <input type="range" id="a-risiko" min="0" max="100" value="25"
+        oninput="document.getElementById('a-val').textContent=this.value+'%'"/>
+    </div>
+    <div class="fg">
+      <label for="a-musim">Musim Tanam</label>
+      <select id="a-musim">
+        <option value="hujan">Musim Hujan (Oktober - Maret)</option>
+        <option value="kering">Musim Kering (April - September)</option>
+      </select>
+    </div>
+    <button class="btn" onclick="doAnalisis()">&#128202; Hitung Analisis</button>
+  </div>
+
+  <!-- HASIL ANALISIS -->
+  <div id="ha" class="hasil">
+    <div class="ctitle">&#128202; Detail Analisis</div>
+    <div class="g4">
+      <div class="g4i"><small>Total Produksi</small><strong id="ha-prod">-</strong></div>
+      <div class="g4i"><small>Harga / kg</small><strong id="ha-harga">-</strong></div>
+      <div class="g4i"><small>Total Pendapatan</small><strong id="ha-pend">-</strong></div>
+      <div class="g4i"><small>Total Biaya</small><strong id="ha-biaya">-</strong></div>
+    </div>
+    <div class="rkbox">
+      <div class="boxt">&#128203; Analisis Ringkas</div>
+      <div class="rkrow"><span>Pendapatan Kotor</span><strong id="ha-r-pend">-</strong></div>
+      <div class="rkrow minus"><span>(-) Biaya Produksi</span><strong id="ha-r-biaya">-</strong></div>
+      <div class="rkrow minus"><span>(-) Kerugian Hama</span><strong id="ha-r-rugi">-</strong></div>
+      <div class="rkrow total"><span>Keuntungan Bersih</span><strong id="ha-r-untung">-</strong></div>
+      <div class="rkrow"><span>ROI</span><strong id="ha-r-roi">-</strong></div>
+    </div>
+    <div class="mbox">
+      <div class="mhdr"><span>Margin Keuntungan</span><strong id="ha-margin">0%</strong></div>
+      <div class="mtrack"><div class="mfill" id="ha-fill" style="width:0%"></div></div>
+    </div>
+    <div class="rbox" style="margin-top:11px"><div class="boxt">&#128161; Rekomendasi</div><ul id="ha-rekom"></ul></div>
+    <button class="ha-btn-custom" id="ha-btn" style="background:#1a4d1a">-</button>
+  </div>
+</div>
+
+<!-- ====== TAB EKONOMI ====== -->
+<div id="pg-ekonomi" class="page">
+  <div class="card">
+    <div class="ctitle">&#128221; Input Data Ekonomi</div>
+    <div class="fr">
+      <div class="fg">
+        <label for="e-lokasi">Lokasi / Wilayah</label>
+        <input type="text" id="e-lokasi" placeholder="Jawa Timur" autocomplete="off"/>
+      </div>
+      <div class="fg">
+        <label for="e-bulan">Periode Tanam</label>
+        <select id="e-bulan">
+          <option>Januari</option><option>Februari</option><option>Maret</option>
+          <option>April</option><option>Mei</option><option>Juni</option>
+          <option>Juli</option><option>Agustus</option><option>September</option>
+          <option>Oktober</option><option>November</option><option>Desember</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label for="e-luas">Luas Lahan (Ha)</label>
+        <input type="number" id="e-luas" value="1" min="0.1" step="0.1" inputmode="decimal"/>
+      </div>
+      <div class="fg">
+        <label for="e-harga">Harga Jual (Rp/kg)</label>
+        <input type="number" id="e-harga" value="42000" step="1000" inputmode="numeric"/>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label for="e-prod">Produksi (Ton/Ha)</label>
+        <input type="number" id="e-prod" value="8" min="1" step="0.5" inputmode="decimal"/>
+      </div>
+      <div class="fg">
+        <label for="e-biaya">Biaya Produksi/Ha (Rp)</label>
+        <input type="number" id="e-biaya" value="50000000" step="1000000" inputmode="numeric"/>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Risiko Serangan Hama: <strong id="e-val">15%</strong></label>
+      <input type="range" id="e-risiko" min="0" max="100" value="15"
+        oninput="document.getElementById('e-val').textContent=this.value+'%'"/>
+      <div class="hint">
+        <span style="color:#2d7a2d">Rendah 0-20%</span>
+        <span style="color:#fb8c00">Sedang 21-40%</span>
+        <span style="color:#e53935">Tinggi &gt;40%</span>
+      </div>
+    </div>
+    <div class="fg">
+      <label for="e-sistem">Sistem Pertanian</label>
+      <select id="e-sistem">
+        <option value="1.00">Konvensional (standar)</option>
+        <option value="0.85">Organik / Ramah Lingkungan</option>
+        <option value="1.15">Intensif / Teknologi Modern</option>
+      </select>
+    </div>
+    <button class="btn" onclick="doEkonomi()">&#128176; Hitung Ekonomi</button>
+  </div>
+
+  <!-- HASIL TECHNO -->
+  <div id="he-t" class="hasil">
+    <div class="ctitle">&#9881; Analisis Techno-Economic</div>
+    <div class="rows">
+      <div class="row"><span>Lokasi</span><strong id="he-lokasi">-</strong></div>
+      <div class="row"><span>Periode Tanam</span><strong id="he-bulan">-</strong></div>
+      <div class="row"><span>Estimasi Panen</span><strong id="he-panen">-</strong></div>
+      <div class="row"><span>Sistem Pertanian</span><strong id="he-sistem">-</strong></div>
+      <div class="row"><span>Luas Lahan</span><strong id="he-luas">-</strong></div>
+      <div class="row"><span>Prediksi Harga</span><strong id="he-harga">-</strong></div>
+      <div class="row"><span>Risiko Serangan</span><strong id="he-risiko">-</strong></div>
+    </div>
+  </div>
+
+  <!-- HASIL KALKULATOR -->
+  <div id="he-k" class="hasil">
+    <div class="ctitle">&#129518; Hasil Kalkulator Keuntungan</div>
+    <div class="ktbl">
+      <div class="krow"><span>Total Produksi</span><strong id="he-k-prod">-</strong></div>
+      <div class="krow"><span>Harga Jual per kg</span><strong id="he-k-harga">-</strong></div>
+      <div class="krow"><span>Total Pendapatan Kotor</span><strong id="he-k-pend">-</strong></div>
+      <div class="krow minus"><span>(-) Biaya Produksi</span><strong id="he-k-biaya">-</strong></div>
+      <div class="krow minus"><span>(-) Kerugian Hama</span><strong id="he-k-rugi">-</strong></div>
+      <div class="krow profit"><span>&#128176; Keuntungan Bersih</span><strong id="he-k-untung">-</strong></div>
+      <div class="krow"><span>ROI</span><strong id="he-k-roi">-</strong></div>
+    </div>
+    <div class="mbox" style="margin-top:12px">
+      <div class="mhdr"><span>Margin Keuntungan</span><strong id="he-margin">0%</strong></div>
+      <div class="mtrack"><div class="mfill" id="he-fill" style="width:0%"></div></div>
+    </div>
+    <div class="rbox" style="margin-top:11px"><div class="boxt">&#128161; Kesimpulan Ekonomi</div><ul id="he-simpul"></ul></div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bn act" onclick="goTab('deteksi',0)">&#127807;<br/><small>Deteksi</small></button>
+  <button class="bn" onclick="goTab('kalender',1)">&#128197;<br/><small>Kalender</small></button>
+  <button class="bn" onclick="goTab('analisis',2)">&#128202;<br/><small>Analisis</small></button>
+  <button class="bn" onclick="goTab('ekonomi',3)">&#128176;<br/><small>Ekonomi</small></button>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+'use strict';
+var BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+var RHAMA=[15,20,25,30,35,40,35,25,20,15,15,10];
+
+/* ── NAVIGASI ── */
+function goTab(id,idx){
+  var pages=document.querySelectorAll('.page');
+  var tabs=document.querySelectorAll('.tab');
+  var bns=document.querySelectorAll('.bn');
+  for(var i=0;i<pages.length;i++){pages[i].classList.remove('act');}
+  for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('act');}
+  for(var i=0;i<bns.length;i++){bns[i].classList.remove('act');}
+  document.getElementById('pg-'+id).classList.add('act');
+  tabs[idx].classList.add('act');
+  bns[idx].classList.add('act');
+}
+
+/* ── FORMAT RUPIAH ── */
+function rp(n){return 'Rp '+Math.round(n).toLocaleString('id-ID');}
+
+/* ── TAMPILKAN KARTU HASIL ── */
+function show(id){
+  var el=document.getElementById(id);
+  el.style.display='block';
+  setTimeout(function(){
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+  },150);
+}
+
+/* ══════════════════════════════
+   DETEKSI
+══════════════════════════════ */
+function doDeteksi(){
+  var petani=document.getElementById('d-petani').value||'-';
+  var lokasi=document.getElementById('d-lokasi').value||'-';
+  var jenis=document.getElementById('d-jenis').value;
+  var umur=document.getElementById('d-umur').value;
+  var s=parseInt(document.getElementById('d-serangan').value)||0;
+  var a=document.getElementById('cb-a').checked;
+  var k=document.getElementById('cb-k').checked;
+  var t=document.getElementById('cb-t').checked;
+  var l=document.getElementById('cb-l').checked;
+  var v=document.getElementById('cb-v').checked;
+
+  document.getElementById('hd-petani').textContent=petani;
+  document.getElementById('hd-lokasi').textContent=lokasi;
+  document.getElementById('hd-jenis').textContent=jenis;
+  document.getElementById('hd-umur').textContent=umur?umur+' hari':'-';
+  document.getElementById('hd-pct').textContent=s+'%';
+
+  var fill=document.getElementById('hd-fill');
+  fill.style.width=s+'%';
+  fill.className='mfill'+(s>=70?' danger':s>=40?' warn':'');
+
+  var lbl=document.getElementById('hd-lbl');
+  if(s>=70){lbl.textContent='TINGGI - Segera tangani sebelum menyebar!';lbl.className='mlbl danger';}
+  else if(s>=40){lbl.textContent='SEDANG - Perlu penanganan dalam 3-5 hari';lbl.className='mlbl warn';}
+  else{lbl.textContent='RENDAH - Kondisi aman, pantau secara rutin';lbl.className='mlbl';}
+
+  var jml=[a,k,t,l,v].filter(Boolean).length;
+  var dh='',rh='';
+  if(jml===0){
+    dh='<li><span class="dot g"></span><div>Tidak ada gejala - tanaman tampak sehat</div></li>';
+    rh='<li><span class="dot g"></span><div>Lanjutkan perawatan rutin dan pemantauan berkala</div></li>';
+  }else{
+    if(a){var lv=s>=70?['Parah','r']:s>=40?['Sedang','o']:['Ringan','g'];dh+='<li><span class="dot r"></span><div><strong>Antraknosa</strong> (Colletotrichum sp.) <span class="blv '+lv[1]+'">'+lv[0]+'</span><br/><small style="color:#888">Bercak hitam cekung pada buah, menyebabkan busuk buah</small></div></li>';rh+='<li><span class="dot g"></span><div>Semprot <strong>Fungisida Mankozeb</strong> setiap 7 hari</div></li>';rh+='<li><span class="dot g"></span><div>Petik dan musnahkan buah yang terinfeksi</div></li>';}
+    if(k){dh+='<li><span class="dot y"></span><div><strong>Kutu Daun / Aphid</strong><br/><small style="color:#888">Daun menggulung, menguning, pertumbuhan terhambat</small></div></li>';rh+='<li><span class="dot g"></span><div>Semprot <strong>Insektisida Imidakloprid</strong> secara merata</div></li>';}
+    if(t){dh+='<li><span class="dot o"></span><div><strong>Thrips</strong> (Thrips parvispinus)<br/><small style="color:#888">Daun silver/pucat, bintik coklat muda</small></div></li>';rh+='<li><span class="dot g"></span><div>Aplikasi <strong>Spinosad</strong> atau pestisida nabati nimba</div></li>';}
+    if(l){dh+='<li><span class="dot r"></span><div><strong>Layu Fusarium</strong><br/><small style="color:#888">Tanaman layu tiba-tiba, pangkal batang membusuk</small></div></li>';rh+='<li><span class="dot g"></span><div>Cabut dan bakar tanaman, siram fungisida ke tanah</div></li>';}
+    if(v){dh+='<li><span class="dot r"></span><div><strong>Virus CMV</strong><br/><small style="color:#888">Daun mosaik belang, tanaman kerdil</small></div></li>';rh+='<li><span class="dot g"></span><div>Segera cabut dan musnahkan - virus tidak dapat disembuhkan</div></li>';}
+  }
+  document.getElementById('hd-diag').innerHTML=dh;
+  document.getElementById('hd-rekom').innerHTML=rh;
+
+  var ban=document.getElementById('hd-ban');
+  if(s>=70||jml>=3){ban.className='banner danger';ban.textContent='KRITIS - '+jml+' masalah ditemukan. Hubungi penyuluh pertanian!';}
+  else if(s>=40||jml>=2){ban.className='banner warn';ban.textContent='WASPADA - '+jml+' gejala ditemukan. Tangani dalam 3 hari.';}
+  else{ban.className='banner ok';ban.textContent=jml===0?'AMAN - Tanaman sehat, pertahankan perawatan rutin.':'AMAN - '+jml+' gejala ringan, masih terkendali.';}
+
+  show('hd');
+}
+
+/* ══════════════════════════════
+   KALENDER
+══════════════════════════════ */
+function doKalender(){
+  var tv=document.getElementById('k-tgl').value;
+  if(!tv){alert('Isi tanggal mulai tanam!');return;}
+  var hari=parseInt(document.getElementById('k-jenis').value);
+  var harga=parseFloat(document.getElementById('k-harga').value)||42000;
+  var luas=parseFloat(document.getElementById('k-luas').value)||1;
+
+  var tT=new Date(tv+'T00:00:00');
+  var tP=new Date(tv+'T00:00:00');
+  tP.setDate(tP.getDate()+hari);
+  var sisa=Math.ceil((tP-new Date())/86400000);
+  var opt={day:'numeric',month:'long',year:'numeric'};
+  var b=tT.getMonth();
+  var kg=8000*luas;
+  var pend=kg*harga;
+  var biaya=50000000*luas;
+
+  document.getElementById('hk-tgl').textContent=tT.toLocaleDateString('id-ID',opt);
+  document.getElementById('hk-panen').textContent=tP.toLocaleDateString('id-ID',opt);
+  document.getElementById('hk-lama').textContent=hari+' hari';
+  document.getElementById('hk-sisa').textContent=sisa>0?sisa+' hari lagi':'Sudah melewati estimasi panen';
+  document.getElementById('hk-harga').textContent=rp(harga)+' / kg';
+  document.getElementById('hk-prod').textContent=kg.toLocaleString('id-ID')+' kg';
+  document.getElementById('hk-untung').textContent=rp(pend-biaya);
+  document.getElementById('hk-t1').textContent=BLN[b]+' - '+BLN[(b+3)%12];
+  document.getElementById('hk-t2').textContent=RHAMA[b]<=20?'Rendah ('+RHAMA[b]+'%)':RHAMA[b]<=35?'Sedang ('+RHAMA[b]+'%)':'Tinggi ('+RHAMA[b]+'%)';
+  document.getElementById('hk-t3').textContent=(b>=9||b<=2)?'Musim Hujan - perhatikan drainase':'Musim Kering - pastikan irigasi cukup';
+  show('hk');
+}
+
+/* ══════════════════════════════
+   ANALISIS
+══════════════════════════════ */
+function doAnalisis(){
+  var prod=parseFloat(document.getElementById('a-prod').value)||8;
+  var harga=parseFloat(document.getElementById('a-harga').value)||42000;
+  var luas=parseFloat(document.getElementById('a-luas').value)||1;
+  var biaya=parseFloat(document.getElementById('a-biaya').value)||50000000;
+  var rsk=parseFloat(document.getElementById('a-risiko').value)||25;
+  var musim=document.getElementById('a-musim').value;
+
+  var kg=prod*1000*luas;
+  var pend=kg*harga;
+  var tbiy=biaya*luas;
+  var rugi=pend*(rsk/100);
+  var untung=pend-tbiy-rugi;
+  var margin=pend>0?Math.max(0,Math.round((untung/pend)*100)):0;
+  var roi=tbiy>0?Math.round((untung/tbiy)*100):0;
+
+  document.getElementById('ha-prod').textContent=kg.toLocaleString('id-ID')+' kg';
+  document.getElementById('ha-harga').textContent=rp(harga);
+  document.getElementById('ha-pend').textContent=rp(pend);
+  document.getElementById('ha-biaya').textContent=rp(tbiy);
+  document.getElementById('ha-r-pend').textContent=rp(pend);
+  document.getElementById('ha-r-biaya').textContent=rp(tbiy);
+  document.getElementById('ha-r-rugi').textContent=rp(rugi);
+  document.getElementById('ha-r-untung').textContent=rp(untung);
+  document.getElementById('ha-r-roi').textContent=roi+'%';
+  document.getElementById('ha-margin').textContent=margin+'%';
+
+  var f=document.getElementById('ha-fill');
+  f.style.width=Math.min(margin,100)+'%';
+  f.className='mfill'+(margin<20?' danger':margin<40?' warn':'');
+
+  var rh='';
+  if(untung>0){
+    rh+='<li><span class="dot g"></span><div>Usaha tani <strong>menguntungkan</strong> - laba '+rp(untung)+'</div></li>';
+    rh+='<li><span class="dot g"></span><div>ROI <strong>'+roi+'%</strong> - '+(roi>=100?'Modal kembali 1 musim tanam':roi>=50?'Hasil cukup baik':'Perlu efisiensi biaya')+'</div></li>';
+  }else{
+    rh+='<li><span class="dot r"></span><div>Estimasi <strong>rugi '+rp(Math.abs(untung))+'</strong> - tinjau biaya & harga jual</div></li>';
+    rh+='<li><span class="dot o"></span><div>Kurangi biaya produksi atau naikkan target harga jual</div></li>';
+  }
+  if(rsk>40)rh+='<li><span class="dot o"></span><div>Risiko hama '+rsk+'% tinggi - terapkan pengendalian hama terpadu</div></li>';
+  if(prod<6)rh+='<li><span class="dot y"></span><div>Produksi di bawah rata-rata - optimalkan pemupukan & irigasi</div></li>';
+  rh+='<li><span class="dot g"></span><div>Musim <strong>'+(musim==='hujan'?'Hujan - waspadai penyakit jamur':'Kering - pastikan air irigasi cukup')+'</strong></div></li>';
+  document.getElementById('ha-rekom').innerHTML=rh;
+
+  var btn=document.getElementById('ha-btn');
+  if(untung>0){btn.textContent='Analisis Positif! Laba '+rp(untung)+' - ROI '+roi+'%';btn.style.background='#1a4d1a';}
+  else{btn.textContent='Estimasi Rugi '+rp(Math.abs(untung))+' - Perlu Evaluasi';btn.style.background='#b71c1c';}
+
+  show('ha');
+}
+
+/* ══════════════════════════════
+   EKONOMI
+══════════════════════════════ */
+function doEkonomi(){
+  var lokasi=document.getElementById('e-lokasi').value||'-';
+  var bulan=document.getElementById('e-bulan').value;
+  var luas=parseFloat(document.getElementById('e-luas').value)||1;
+  var harga=parseFloat(document.getElementById('e-harga').value)||42000;
+  var prod=parseFloat(document.getElementById('e-prod').value)||8;
+  var biayaH=parseFloat(document.getElementById('e-biaya').value)||50000000;
+  var risiko=parseInt(document.getElementById('e-risiko').value)||15;
+  var sel=document.getElementById('e-sistem');
+  var multi=parseFloat(sel.value)||1;
+  var sis=sel.options[sel.selectedIndex].text.split('(')[0].trim();
+
+  var bi=BLN.indexOf(bulan);
+  var pBln=BLN[(bi+3)%12];
+  var kg=luas*prod*1000;
+  var pend=kg*harga;
+  var tbiy=biayaH*luas;
+  var rugi=pend*(risiko/100);
+  var untung=(pend-tbiy-rugi)*multi;
+  var margin=pend>0?Math.max(0,Math.round((untung/pend)*100)):0;
+  var roi=tbiy>0?Math.round((untung/tbiy)*100):0;
+  var risikoLbl=risiko<=20?'Rendah':risiko<=40?'Sedang':'Tinggi';
+
+  document.getElementById('he-lokasi').textContent=lokasi;
+  document.getElementById('he-bulan').textContent=bulan;
+  document.getElementById('he-panen').textContent=pBln;
+  document.getElementById('he-sistem').textContent=sis;
+  document.getElementById('he-luas').textContent=luas+' Ha';
+  document.getElementById('he-harga').textContent=rp(harga)+' / kg';
+  var rEl=document.getElementById('he-risiko');
+  rEl.textContent=risiko+'% ('+risikoLbl+')';
+  rEl.className=risiko<=20?'gt':risiko<=40?'ot':'rt';
+
+  document.getElementById('he-k-prod').textContent=kg.toLocaleString('id-ID')+' kg';
+  document.getElementById('he-k-harga').textContent=rp(harga);
+  document.getElementById('he-k-pend').textContent=rp(pend);
+  document.getElementById('he-k-biaya').textContent=rp(tbiy);
+  document.getElementById('he-k-rugi').textContent=rp(rugi);
+  document.getElementById('he-k-untung').textContent=rp(untung);
+  document.getElementById('he-k-roi').textContent=roi+'%';
+  document.getElementById('he-margin').textContent=margin+'%';
+
+  var f=document.getElementById('he-fill');
+  f.style.width=Math.min(margin,100)+'%';
+  f.className='mfill'+(margin<20?' danger':margin<40?' warn':'');
+
+  var kh='';
+  if(untung>0){
+    kh+='<li><span class="dot g"></span><div>Usaha <strong>layak secara ekonomi</strong> - laba '+rp(untung)+'</div></li>';
+    kh+='<li><span class="dot g"></span><div>ROI <strong>'+roi+'%</strong> - '+(roi>=100?'Sangat menguntungkan':roi>=50?'Hasil baik':'Perlu dioptimalkan')+'</div></li>';
+    if(multi<1)kh+='<li><span class="dot g"></span><div>Sistem organik lebih berkelanjutan jangka panjang</div></li>';
+    if(multi>1)kh+='<li><span class="dot g"></span><div>Sistem intensif meningkatkan potensi pendapatan 15%</div></li>';
+  }else{
+    kh+='<li><span class="dot r"></span><div>Usaha <strong>belum layak</strong> - estimasi rugi '+rp(Math.abs(untung))+'</div></li>';
+    kh+='<li><span class="dot o"></span><div>Kurangi biaya atau cari harga jual lebih tinggi</div></li>';
+    kh+='<li><span class="dot o"></span><div>Pertimbangkan KUR Pertanian atau subsidi pupuk</div></li>';
+  }
+  if(risiko>40)kh+='<li><span class="dot r"></span><div>Risiko hama '+risiko+'% sangat tinggi - investasikan pada PHT</div></li>';
+  document.getElementById('he-simpul').innerHTML=kh;
+
+  show('he-t');
+  setTimeout(function(){show('he-k');},200);
+}
+
+/* ══════════════════════════════
+   GRAFIK PREDIKSI 5 TAHUN
+══════════════════════════════ */
+function buatGrafik(){
+  var yr=new Date().getFullYear();
+  var lbl=[],ak=[],pr=[];
+  var hist=[32000,35000,38000,36000,38000,42000,40000,37000,40000,44000,42000,39000];
+  var kw=['Q1','Q2','Q3','Q4'];
+  var vm=[1.05,1.00,0.88,0.95];
+  var y,qi;
+
+  for(y=yr-2;y<=yr;y++){
+    for(qi=0;qi<kw.length;qi++){lbl.push(kw[qi]+' '+y);}
+  }
+  for(var hi=0;hi<hist.length;hi++){ak.push(hist[hi]);pr.push(null);}
+  pr[pr.length-1]=hist[hist.length-1];
+
+  for(y=1;y<=5;y++){
+    for(qi=0;qi<kw.length;qi++){
+      lbl.push(kw[qi]+' '+(yr+y));
+      ak.push(null);
+      pr.push(Math.round(42000*Math.pow(1.07,y)*vm[qi]));
+    }
+  }
+
+  var ctx=document.getElementById('priceChart').getContext('2d');
+  new Chart(ctx,{
+    type:'line',
+    data:{labels:lbl,datasets:[
+      {label:'Historis',data:ak,borderColor:'#2d7a2d',backgroundColor:'rgba(45,122,45,0.08)',borderWidth:2,pointRadius:2,pointBackgroundColor:'#1a4d1a',tension:0.4,fill:true,spanGaps:false},
+      {label:'Prediksi',data:pr,borderColor:'#f5c518',borderDash:[5,4],borderWidth:2,pointRadius:2,pointBackgroundColor:'#c8a000',tension:0.4,fill:false,spanGaps:false}
+    ]},
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+(c.raw?'Rp '+c.raw.toLocaleString('id-ID'):'-');}}}
+      },
+      scales:{
+        y:{min:25000,ticks:{callback:function(v){return(v/1000)+'k';},font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'}},
+        x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false}}
+      }
+    }
+  });
+}
+
+/* ── INIT ── */
+window.addEventListener('load',function(){
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('k-tgl').value=today;
+  buatGrafik();
+});
+</script>
+</body>
+</html>
