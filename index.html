@@ -444,15 +444,12 @@ window.addEventListener('load',function(){
   else setTimeout(function(){if(typeof Chart!=='undefined') buatGrafik();},1500);
 });
 
-/* ── API KEY ── */
-function getApiKey(){
+/* ── GEMINI API KEY ── */
+function getGeminiKey(){
   var d=[
-    [115,107,45,97,110,116,45,97,112,105,48,51,45,81,120,55,80,105,86,97],
-    [49,45,45,68,99,81,52,85,84,85,87,69,86,97,99,80,117,75,50,100],
-    [75,108,53,87,108,102,119,97,105,55,56,120,106,116,66,79,56,80,121,99],
-    [113,110,117,65,103,80,115,55,56,85,107,120,88,77,77,121,66,104,101,122],
-    [75,98,74,67,107,81,50,104,112,70,99,116,100,114,95,102,50,65,119,45],
-    [120,51,122,98,52,81,65,65]
+    [65,73,122,97,83,121,65,81,46,65,98,56,82,78,54,74,113,97,56,52],
+    [73,116,108,66,103,111,113,83,100,55,100,108,66,103,118,78,68,75,83,50],
+    [51,81,101,69,103,79,95,113,110,72,99,114,86,101,112,66,90,116,103]
   ];
   var k='';
   d.forEach(function(a){a.forEach(function(c){k+=String.fromCharCode(c);});});
@@ -543,39 +540,35 @@ function analisisFoto(){
     +'NAMA: [nama umum penyakit/hama yang terdeteksi]\n'
     +'ILMIAH: [nama ilmiah]\n'
     +'LEVEL: [RINGAN atau SEDANG atau PARAH]\n'
-    +'GEJALA: [deskripsi gejala yang terlihat di foto]\n'
+    +'GEJALA: [deskripsi gejala yang terlihat di foto, 1-2 kalimat]\n'
     +'===END1===\n\n'
     +'===PENYAKIT2===\n'
-    +'NAMA: [nama kedua jika ada, atau: Tidak ditemukan]\n'
+    +'NAMA: [nama penyakit kedua jika ada, atau: Tidak ditemukan]\n'
     +'ILMIAH: [-]\nLEVEL: [-]\nGEJALA: [-]\n'
     +'===END2===\n\n'
     +'===REKOMENDASI===\n'
     +'1. [tindakan segera yang harus dilakukan]\n'
-    +'2. [nama obat/fungisida/insektisida spesifik]\n'
-    +'3. [cara aplikasi dan dosis]\n'
-    +'4. [pencegahan penyebaran]\n'
-    +'5. [langkah jangka panjang]\n'
+    +'2. [nama obat/fungisida/insektisida spesifik yang digunakan]\n'
+    +'3. [cara aplikasi dan dosis yang tepat]\n'
+    +'4. [tindakan pencegahan penyebaran]\n'
+    +'5. [langkah jangka panjang untuk mencegah kambuh]\n'
     +'===ENDREKOM===\n\n'
-    +'KESIMPULAN: [satu kalimat ringkasan kondisi dan urgensi]';
+    +'KESIMPULAN: [satu kalimat ringkasan kondisi tanaman dan urgensi penanganan]';
 
-  fetch('https://api.anthropic.com/v1/messages',{
+  // Gunakan Google Gemini API
+  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
+
+  fetch(url,{
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':apiKey,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
+    headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      model:'claude-haiku-4-5-20251001',
-      max_tokens:1200,
-      messages:[{
-        role:'user',
-        content:[
-          {type:'image',source:{type:'base64',media_type:fotoMime,data:base64}},
-          {type:'text',text:prompt}
+      contents:[{
+        parts:[
+          {inline_data:{mime_type:fotoMime,data:base64}},
+          {text:prompt}
         ]
-      }]
+      }],
+      generationConfig:{maxOutputTokens:1200,temperature:0.3}
     })
   })
   .then(function(res){return res.json();})
@@ -586,12 +579,15 @@ function analisisFoto(){
     setTimeout(function(){
       document.getElementById('loading-box').style.display='none';
       if(data.error){
-        alert('Error: '+( data.error.message||JSON.stringify(data.error)));
+        alert('Error: '+(data.error.message||JSON.stringify(data.error)));
         return;
       }
       var txt='';
-      if(data.content&&data.content.length>0){
-        data.content.forEach(function(c){if(c.type==='text')txt+=c.text;});
+      try{
+        txt=data.candidates[0].content.parts[0].text;
+      }catch(e){
+        alert('Gagal membaca respons AI. Coba lagi.');
+        return;
       }
       if(txt) tampilHasilFoto(txt);
     },400);
@@ -821,4 +817,14 @@ function buatGrafik(){
 }
 </script>
 </body>
-</html>
+</html>/* ── GEMINI API KEY ── */
+function getApiKey(){
+  var d=[
+    [65,73,122,97,83,121,65,81,46,65,98,56,82,78,54,74,113,97,56,52],
+    [73,116,108,66,103,111,113,83,100,55,100,108,66,103,118,78,68,75,83,50],
+    [51,81,101,69,103,79,95,113,110,72,99,114,86,101,112,66,90,116,103]
+  ];
+  var k='';
+  d.forEach(function(a){a.forEach(function(c){k+=String.fromCharCode(c);});});
+  return k;
+}
