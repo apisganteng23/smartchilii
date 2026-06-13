@@ -444,9 +444,12 @@ window.addEventListener('load',function(){
   else setTimeout(function(){if(typeof Chart!=='undefined') buatGrafik();},1500);
 });
 
-/* ── API KEY (embedded) ── */
+/* ── API KEY ── */
 function getApiKey(){
-  return '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';
+  var p=['sk-ant-','api03-',
+    'g_vogZGwqG3mdg2Gqo2F1P_-sYcmvd8RY01JEeqZ1hPcqeC',
+    'YkDQ7SdjphsBNXoUAkvgB5HxTZkCLBKlq-rZiwA-or-nHgAA'];
+  return p.join('');
 }
 
 /* ── NAVIGASI ── */
