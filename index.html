@@ -445,7 +445,7 @@ window.addEventListener('load',function(){
 });
 
 /* ── GEMINI API KEY ── */
-function getGeminiKey(){
+function getApiKey(){
   var d=[
     [65,73,122,97,83,121,65,81,46,65,98,56,82,78,54,74,113,97,56,52],
     [73,116,108,66,103,111,113,83,100,55,100,108,66,103,118,78,68,75,83,50],
@@ -815,16 +815,7 @@ function buatGrafik(){
     {label:'Prediksi',data:pr,borderColor:'#f5c518',borderDash:[5,4],borderWidth:2,pointRadius:2,tension:0.4,fill:false,spanGaps:false}
   ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+(c.raw?'Rp '+c.raw.toLocaleString('id-ID'):'-');}}}},scales:{y:{min:25000,ticks:{callback:function(v){return(v/1000)+'k';},font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'}},x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false}}}}});
 }
+
 </script>
 </body>
-</html>/* ── GEMINI API KEY ── */
-function getApiKey(){
-  var d=[
-    [65,73,122,97,83,121,65,81,46,65,98,56,82,78,54,74,113,97,56,52],
-    [73,116,108,66,103,111,113,83,100,55,100,108,66,103,118,78,68,75,83,50],
-    [51,81,101,69,103,79,95,113,110,72,99,114,86,101,112,66,90,116,103]
-  ];
-  var k='';
-  d.forEach(function(a){a.forEach(function(c){k+=String.fromCharCode(c);});});
-  return k;
-}
+</html>
