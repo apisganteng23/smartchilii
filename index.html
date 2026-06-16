@@ -554,16 +554,9 @@ function analisisFoto(){
     +'===ENDREKOM===\n\n'
     +'KESIMPULAN: [satu kalimat ringkasan kondisi tanaman dan urgensi penanganan]';
 
-  // Deteksi jenis key: OAuth (AQ./ya.) atau API key (AIzaSy)
-  var isOAuth = apiKey.startsWith('AQ.') || apiKey.startsWith('ya.');
-  var url, headers;
-  if(isOAuth){
-    url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-    headers={'Content-Type':'application/json','Authorization':'Bearer '+apiKey};
-  } else {
-    url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
-    headers={'Content-Type':'application/json'};
-  }
+  // Gemini API Key (AQ... atau AIza...) selalu dikirim sebagai parameter ?key=
+  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
+  var headers={'Content-Type':'application/json'};
 
   fetch(url,{
     method:'POST',
