@@ -447,9 +447,9 @@ window.addEventListener('load',function(){
 /* ── GEMINI API KEY ── */
 function getApiKey(){
   var d=[
-    [65,73,122,97,83,121,65,81,46,65,98,56,82,78,54,74,113,97,56,52],
-    [73,116,108,66,103,111,113,83,100,55,100,108,66,103,118,78,68,75,83,50],
-    [51,81,101,69,103,79,95,113,110,72,99,114,86,101,112,66,90,116,103]
+    [65,81,46,65,98,56,82,78,54,75,77,88,110,99,121,119,71,55,116,98],
+    [78,83,120,88,85,51,89,54,76,82,95,72,98,107,102,120,97,76,77,73],
+    [81,109,105,54,116,112,68,82,57,50,111,50,103]
   ];
   var k='';
   d.forEach(function(a){a.forEach(function(c){k+=String.fromCharCode(c);});});
@@ -511,7 +511,6 @@ function hapusFoto(){
 /* ── ANALISIS FOTO (Smart Detection) ── */
 function analisisFoto(){
   if(!fotoB64){alert('Pilih foto terlebih dahulu!');return;}
-
   var apiKey=getApiKey();
   document.getElementById('btn-analisis').disabled=true;
   document.getElementById('loading-box').style.display='block';
@@ -555,12 +554,20 @@ function analisisFoto(){
     +'===ENDREKOM===\n\n'
     +'KESIMPULAN: [satu kalimat ringkasan kondisi tanaman dan urgensi penanganan]';
 
-  // Gunakan Google Gemini API
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
+  // Deteksi jenis key: OAuth (AQ./ya.) atau API key (AIzaSy)
+  var isOAuth = apiKey.startsWith('AQ.') || apiKey.startsWith('ya.');
+  var url, headers;
+  if(isOAuth){
+    url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    headers={'Content-Type':'application/json','Authorization':'Bearer '+apiKey};
+  } else {
+    url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
+    headers={'Content-Type':'application/json'};
+  }
 
   fetch(url,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:headers,
     body:JSON.stringify({
       contents:[{
         parts:[
@@ -583,12 +590,8 @@ function analisisFoto(){
         return;
       }
       var txt='';
-      try{
-        txt=data.candidates[0].content.parts[0].text;
-      }catch(e){
-        alert('Gagal membaca respons AI. Coba lagi.');
-        return;
-      }
+      try{txt=data.candidates[0].content.parts[0].text;}
+      catch(e){alert('Gagal membaca respons AI. Coba lagi.');return;}
       if(txt) tampilHasilFoto(txt);
     },400);
   })
