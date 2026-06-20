@@ -455,8 +455,6 @@ function getApiKey(){
   d.forEach(function(a){a.forEach(function(c){k+=String.fromCharCode(c);});});
   return k;
 }
-
-/* ── NAVIGASI ── */
 function goTab(id,idx){
   var i,p=document.querySelectorAll('.page'),t=document.querySelectorAll('.tab'),b=document.querySelectorAll('.bn');
   for(i=0;i<p.length;i++)p[i].classList.remove('on');
@@ -512,6 +510,7 @@ function hapusFoto(){
 function analisisFoto(){
   if(!fotoB64){alert('Pilih foto terlebih dahulu!');return;}
   var apiKey=getApiKey();
+
   document.getElementById('btn-analisis').disabled=true;
   document.getElementById('loading-box').style.display='block';
   document.getElementById('hasil-foto').style.display='none';
@@ -530,37 +529,36 @@ function analisisFoto(){
   var base64=fotoB64.split(',')[1];
   var info=document.getElementById('foto-info').value;
 
-  var prompt='Kamu adalah ahli patologi tanaman cabai Indonesia yang sangat berpengalaman. Analisis foto tanaman cabai ini dengan cermat.\n\n'
+  var prompt='Kamu adalah ahli patologi tanaman cabai Indonesia yang berpengalaman.\n\n'
     +(info?'Informasi dari petani: '+info+'\n\n':'')
-    +'Berikan analisis dalam format PERSIS berikut:\n\n'
+    +'Analisis foto ini dan jawab dalam format PERSIS berikut:\n\n'
     +'TINGKAT: [angka 0-100]\n'
     +'STATUS: [AMAN atau WASPADA atau KRITIS]\n\n'
     +'===PENYAKIT1===\n'
-    +'NAMA: [nama umum penyakit/hama yang terdeteksi]\n'
+    +'NAMA: [nama penyakit/hama]\n'
     +'ILMIAH: [nama ilmiah]\n'
     +'LEVEL: [RINGAN atau SEDANG atau PARAH]\n'
-    +'GEJALA: [deskripsi gejala yang terlihat di foto, 1-2 kalimat]\n'
+    +'GEJALA: [deskripsi gejala yang terlihat]\n'
     +'===END1===\n\n'
     +'===PENYAKIT2===\n'
-    +'NAMA: [nama penyakit kedua jika ada, atau: Tidak ditemukan]\n'
+    +'NAMA: [nama kedua atau: Tidak ditemukan]\n'
     +'ILMIAH: [-]\nLEVEL: [-]\nGEJALA: [-]\n'
     +'===END2===\n\n'
     +'===REKOMENDASI===\n'
-    +'1. [tindakan segera yang harus dilakukan]\n'
-    +'2. [nama obat/fungisida/insektisida spesifik yang digunakan]\n'
-    +'3. [cara aplikasi dan dosis yang tepat]\n'
-    +'4. [tindakan pencegahan penyebaran]\n'
-    +'5. [langkah jangka panjang untuk mencegah kambuh]\n'
+    +'1. [tindakan segera]\n'
+    +'2. [nama obat/fungisida/insektisida spesifik]\n'
+    +'3. [cara aplikasi dan dosis]\n'
+    +'4. [pencegahan penyebaran]\n'
+    +'5. [langkah jangka panjang]\n'
     +'===ENDREKOM===\n\n'
-    +'KESIMPULAN: [satu kalimat ringkasan kondisi tanaman dan urgensi penanganan]';
+    +'KESIMPULAN: [satu kalimat ringkasan]';
 
-  // Gemini API Key (AQ... atau AIza...) selalu dikirim sebagai parameter ?key=
+  // Pakai ?key= di URL (cara yang benar untuk Gemini API key)
   var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
-  var headers={'Content-Type':'application/json'};
 
   fetch(url,{
     method:'POST',
-    headers:headers,
+    headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       contents:[{
         parts:[
@@ -568,7 +566,7 @@ function analisisFoto(){
           {text:prompt}
         ]
       }],
-      generationConfig:{maxOutputTokens:1200,temperature:0.3}
+      generationConfig:{maxOutputTokens:1500,temperature:0.3}
     })
   })
   .then(function(res){return res.json();})
@@ -583,73 +581,112 @@ function analisisFoto(){
         return;
       }
       var txt='';
-      try{txt=data.candidates[0].content.parts[0].text;}
-      catch(e){alert('Gagal membaca respons AI. Coba lagi.');return;}
-      if(txt) tampilHasilFoto(txt);
+      try{
+        if(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts){
+          data.candidates[0].content.parts.forEach(function(p){if(p.text)txt+=p.text;});
+        }
+      }catch(e){console.error('Parse error:',e);}
+      if(txt){
+        tampilHasilFoto(txt);
+      } else {
+        alert('AI tidak memberikan respons. Coba lagi dengan foto yang lebih jelas.');
+      }
     },400);
   })
   .catch(function(err){
     clearInterval(iv);
     document.getElementById('btn-analisis').disabled=false;
     document.getElementById('loading-box').style.display='none';
-    alert('Gagal terhubung ke AI. Periksa koneksi internet Anda.');
-    console.error(err);
+    console.error('Fetch error:',err);
+    alert('Gagal terhubung ke AI.\nPastikan koneksi internet aktif lalu coba lagi.');
   });
 }
 
-function tampilHasilFoto(pct,p1,p2,rekom,kesimpulan){
+function tampilHasilFoto(txt){
+  // Parse tingkat serangan
+  var pctM=txt.match(/TINGKAT:\s*(\d+)/i);
+  var pct=pctM?Math.min(100,Math.max(0,parseInt(pctM[1]))):40;
+  var stM=txt.match(/STATUS:\s*(\S+)/i);
+  var st=stM?stM[1].toUpperCase():'WASPADA';
+
+  // Tampilkan foto
   document.getElementById('hasil-img').src=fotoB64;
+
+  // Meter
   document.getElementById('ai-pct').textContent=pct+'%';
   var fill=document.getElementById('ai-fill');
   setTimeout(function(){fill.style.width=pct+'%';},100);
   fill.className='mfill'+(pct>=70?' danger':pct>=40?' warn':'');
-
   var lbl=document.getElementById('ai-lbl');
   if(pct>=70){lbl.textContent='TINGGI — Segera tangani sebelum menyebar!';lbl.className='mlbl danger';}
   else if(pct>=40){lbl.textContent='SEDANG — Perlu penanganan dalam 3–5 hari';lbl.className='mlbl warn';}
   else{lbl.textContent='RENDAH — Kondisi terkendali, pantau secara rutin';lbl.className='mlbl';}
 
-  // Penyakit
-  var pw=document.getElementById('ai-penyakit');pw.innerHTML='';
-  [p1,p2].forEach(function(p){
-    if(!p||p.nama.includes('Tidak ada'))return;
-    var lc=p.lev==='PARAH'?{bg:'#fde8e8',cl:'#c62828',bd:'#ffcdd2'}:p.lev==='SEDANG'?{bg:'#fff3e0',cl:'#e65100',bd:'#ffcc80'}:{bg:'#d4edda',cl:'#1a4d1a',bd:'#a8d4a8'};
+  // Parse penyakit
+  var pw=document.getElementById('ai-penyakit');
+  pw.innerHTML='';
+  var found=false;
+  [1,2].forEach(function(n){
+    var re=new RegExp('===PENYAKIT'+n+'===([\\s\\S]*?)===END'+n+'===','i');
+    var m=txt.match(re);
+    if(!m)return;
+    var blk=m[1];
+    var nama=((blk.match(/NAMA:\s*([^\n]+)/i)||[])[1]||'').trim();
+    var ilm=((blk.match(/ILMIAH:\s*([^\n]+)/i)||[])[1]||'').trim();
+    var lev=((blk.match(/LEVEL:\s*([^\n]+)/i)||[])[1]||'').trim();
+    var gej=((blk.match(/GEJALA:\s*([^\n]+)/i)||[])[1]||'').trim();
+    if(!nama||nama.toLowerCase().includes('tidak ditemukan')||nama==='-')return;
+    found=true;
+    var lc=lev.toUpperCase()==='PARAH'?{bg:'#fde8e8',cl:'#c62828',bd:'#ffcdd2'}
+          :lev.toUpperCase()==='SEDANG'?{bg:'#fff3e0',cl:'#e65100',bd:'#ffcc80'}
+          :{bg:'#d4edda',cl:'#1a4d1a',bd:'#a8d4a8'};
     var d=document.createElement('div');
     d.className='disease-card';
     d.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">'
-      +'<span style="font-size:14px;font-weight:700;color:#1a4d1a">'+p.nama+'</span>'
-      +(p.lev&&p.lev!=='-'?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:'+lc.bg+';color:'+lc.cl+';border:1px solid '+lc.bd+'">'+p.lev+'</span>':'')
+      +'<span style="font-size:14px;font-weight:700;color:#1a4d1a">'+nama+'</span>'
+      +(lev&&lev!=='-'?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:'+lc.bg+';color:'+lc.cl+';border:1px solid '+lc.bd+'">'+lev+'</span>':'')
       +'</div>'
-      +(p.ilm&&p.ilm!=='-'?'<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:4px">'+p.ilm+'</div>':'')
-      +'<div style="font-size:13px;color:#333;line-height:1.5">'+p.gej+'</div>';
+      +(ilm&&ilm!=='-'?'<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:4px">'+ilm+'</div>':'')
+      +(gej&&gej!=='-'?'<div style="font-size:13px;color:#333;line-height:1.5">'+gej+'</div>':'');
     pw.appendChild(d);
   });
-  if(!pw.children.length){
-    var d=document.createElement('div');
-    d.className='disease-card';
-    d.innerHTML='<div style="font-size:14px;font-weight:700;color:#1a4d1a;margin-bottom:4px">'+p1.nama+'</div><div style="font-size:13px;color:#333;line-height:1.5">'+p1.gej+'</div>';
-    pw.appendChild(d);
+  if(!found){
+    var nf=document.createElement('div');
+    nf.className='disease-card';
+    nf.innerHTML='<div style="font-size:13px;color:#555">Tidak terdeteksi penyakit signifikan pada foto ini.</div>';
+    pw.appendChild(nf);
   }
 
-  // Rekomendasi
-  var rEl=document.getElementById('ai-rekom');rEl.innerHTML='';
-  rekom.forEach(function(teks,i){
-    var row=document.createElement('div');
-    row.className='rekom-item';
-    row.innerHTML='<div class="rekom-num">'+(i+1)+'</div><div style="color:#1c2b1c">'+teks+'</div>';
-    rEl.appendChild(row);
-  });
+  // Parse rekomendasi
+  var rEl=document.getElementById('ai-rekom');
+  rEl.innerHTML='';
+  var reM=txt.match(/===REKOMENDASI===([\s\S]*?)===ENDREKOM===/i);
+  if(reM){
+    var lines=reM[1].split('\n').filter(function(l){return l.trim().match(/^\d+\./);});
+    lines.forEach(function(ln,i){
+      var teks=ln.replace(/^\d+\.\s*/,'').trim();
+      if(!teks)return;
+      var row=document.createElement('div');
+      row.className='rekom-item';
+      row.innerHTML='<div class="rekom-num">'+(i+1)+'</div><div style="color:#1c2b1c">'+teks+'</div>';
+      rEl.appendChild(row);
+    });
+  }
+  if(!rEl.children.length){
+    rEl.innerHTML='<div class="rekom-item"><div class="rekom-num">1</div><div>Konsultasikan dengan penyuluh pertanian setempat.</div></div>';
+  }
 
-  // Banner
+  // Banner kesimpulan
+  var ksM=txt.match(/KESIMPULAN:\s*([^\n]+)/i);
+  var ks=ksM?ksM[1].trim():'Analisis foto selesai.';
   var bn=document.getElementById('ai-banner');
-  if(pct>=70){bn.className='banner danger';bn.textContent='KRITIS — '+kesimpulan;}
-  else if(pct>=40){bn.className='banner warn';bn.textContent='WASPADA — '+kesimpulan;}
-  else{bn.className='banner ok';bn.textContent='AMAN — '+kesimpulan;}
+  if(st==='KRITIS'||pct>=70){bn.className='banner danger';bn.textContent='KRITIS — '+ks;}
+  else if(st==='WASPADA'||pct>=40){bn.className='banner warn';bn.textContent='WASPADA — '+ks;}
+  else{bn.className='banner ok';bn.textContent='AMAN — '+ks;}
 
   tampil('hasil-foto');
 }
 
-/* ── DETEKSI MANUAL ── */
 function doDeteksi(){
   var petani=document.getElementById('d-petani').value||'-';
   var lokasi=document.getElementById('d-lokasi').value||'-';
