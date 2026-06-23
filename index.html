@@ -444,10 +444,8 @@ window.addEventListener('load',function(){
   else setTimeout(function(){if(typeof Chart!=='undefined') buatGrafik();},1500);
 });
 
-/* ── GEMINI API KEY ── */
-function getApiKey(){
-  return 'AQ.Ab8RN6Kr7tP-u9yaPn0Qyy-ZetnN6rRgkjbMSxhy4xIRr-dBnw';
-}
+/* ── PROXY URL (key tersimpan aman di server, bukan di sini) ── */
+var PROXY_URL = 'https://smartchili-proxy.naufalazkiya123.workers.dev/';
 function goTab(id,idx){
   var i,p=document.querySelectorAll('.page'),t=document.querySelectorAll('.tab'),b=document.querySelectorAll('.bn');
   for(i=0;i<p.length;i++)p[i].classList.remove('on');
@@ -502,7 +500,6 @@ function hapusFoto(){
 /* ── ANALISIS FOTO (Smart Detection) ── */
 function analisisFoto(){
   if(!fotoB64){alert('Pilih foto terlebih dahulu!');return;}
-  var apiKey=getApiKey();
 
   document.getElementById('btn-analisis').disabled=true;
   document.getElementById('loading-box').style.display='block';
@@ -546,12 +543,10 @@ function analisisFoto(){
     +'===ENDREKOM===\n\n'
     +'KESIMPULAN: [satu kalimat ringkasan]';
 
-  // Key tipe baru (AQ.) WAJIB dikirim lewat header x-goog-api-key, bukan ?key= di URL
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-
-  fetch(url,{
+  // Panggil proxy (key aman tersimpan di server, tidak ada di kode ini)
+  fetch(PROXY_URL,{
     method:'POST',
-    headers:{'Content-Type':'application/json','x-goog-api-key':apiKey},
+    headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       contents:[{
         parts:[
