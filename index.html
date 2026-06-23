@@ -553,12 +553,12 @@ function analisisFoto(){
     +'===ENDREKOM===\n\n'
     +'KESIMPULAN: [satu kalimat ringkasan]';
 
-  // Pakai ?key= di URL (cara yang benar untuk Gemini API key)
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
+  // Key tipe baru (AQ.) WAJIB dikirim lewat header x-goog-api-key, bukan ?key= di URL
+  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
   fetch(url,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{'Content-Type':'application/json','x-goog-api-key':apiKey},
     body:JSON.stringify({
       contents:[{
         parts:[
