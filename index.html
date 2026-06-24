@@ -543,11 +543,35 @@ function analisisFoto(){
     +'===ENDREKOM===\n\n'
     +'KESIMPULAN: [satu kalimat ringkasan]';
 
-  // Panggil proxy (key aman tersimpan di server, tidak ada di kode ini)
-  fetch(PROXY_URL,{
+// Panggil AI dengan coba-ulang otomatis kalau server Google sedang sibuk
+function panggilAIDenganRetry(payload, percobaan){
+  percobaan = percobaan || 1;
+  var MAKS_PERCOBAAN = 3;
+
+  return fetch(PROXY_URL,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
+    body:JSON.stringify(payload)
+  })
+  .then(function(res){return res.json();})
+  .then(function(data){
+    var pesanError = data.error ? (data.error.message||'') : '';
+    var sedangSibuk = pesanError.indexOf('high demand')!==-1 || pesanError.indexOf('overloaded')!==-1 || pesanError.indexOf('UNAVAILABLE')!==-1 || (data.error && data.error.code===503);
+
+    if(sedangSibuk && percobaan<MAKS_PERCOBAAN){
+      document.getElementById('loading-txt').textContent='Server AI sedang sibuk, mencoba ulang... ('+percobaan+'/'+MAKS_PERCOBAAN+')';
+      return new Promise(function(resolve){
+        setTimeout(function(){
+          resolve(panggilAIDenganRetry(payload, percobaan+1));
+        }, percobaan*3000); // tunggu makin lama tiap percobaan: 3s, 6s
+      });
+    }
+    return data;
+  });
+}
+
+// Panggil proxy (key aman tersimpan di server, tidak ada di kode ini)
+panggilAIDenganRetry({
       contents:[{
         parts:[
           {inline_data:{mime_type:fotoMime,data:base64}},
@@ -556,8 +580,6 @@ function analisisFoto(){
       }],
       generationConfig:{maxOutputTokens:1500,temperature:0.3}
     })
-  })
-  .then(function(res){return res.json();})
   .then(function(data){
     clearInterval(iv);
     document.getElementById('prog-fill').style.width='100%';
@@ -565,7 +587,12 @@ function analisisFoto(){
     setTimeout(function(){
       document.getElementById('loading-box').style.display='none';
       if(data.error){
-        alert('Error: '+(data.error.message||JSON.stringify(data.error)));
+        var pesanErr = data.error.message||JSON.stringify(data.error);
+        if(pesanErr.indexOf('high demand')!==-1 || pesanErr.indexOf('overloaded')!==-1){
+          alert('Server AI Google sedang sangat sibuk setelah beberapa kali percobaan.\nSilakan tunggu 1-2 menit lalu klik tombol Analisis lagi.');
+        } else {
+          alert('Error: '+pesanErr);
+        }
         return;
       }
       var txt='';
