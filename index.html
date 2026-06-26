@@ -579,7 +579,7 @@ panggilAIDenganRetry({
           {text:prompt}
         ]
       }],
-      generationConfig:{maxOutputTokens:1500,temperature:0.3}
+      generationConfig:{maxOutputTokens:4096,temperature:0.3}
     })
   .then(function(data){
     clearInterval(iv);
@@ -619,14 +619,17 @@ panggilAIDenganRetry({
 }
 
 function tampilHasilFoto(txt){
-  console.log('=== JAWABAN MENTAH DARI AI ===');
-  console.log(txt);
-  console.log('=== AKHIR JAWABAN MENTAH ===');
   // Parse tingkat serangan
   var pctM=txt.match(/TINGKAT:\s*(\d+)/i);
   var pct=pctM?Math.min(100,Math.max(0,parseInt(pctM[1]))):40;
   var stM=txt.match(/STATUS:\s*(\S+)/i);
   var st=stM?stM[1].toUpperCase():'WASPADA';
+
+  // Satukan level bahaya: ambil yang paling tinggi antara angka TINGKAT dan teks STATUS,
+  // supaya meter atas dan banner bawah selalu sinkron (tidak ada lagi "RENDAH" tapi "KRITIS")
+  var levelDariPct = pct>=70?2:(pct>=40?1:0);
+  var levelDariSt = st==='KRITIS'?2:(st==='WASPADA'?1:0);
+  var level = Math.max(levelDariPct, levelDariSt);
 
   // Tampilkan foto
   document.getElementById('hasil-img').src=fotoB64;
@@ -635,10 +638,10 @@ function tampilHasilFoto(txt){
   document.getElementById('ai-pct').textContent=pct+'%';
   var fill=document.getElementById('ai-fill');
   setTimeout(function(){fill.style.width=pct+'%';},100);
-  fill.className='mfill'+(pct>=70?' danger':pct>=40?' warn':'');
+  fill.className='mfill'+(level===2?' danger':level===1?' warn':'');
   var lbl=document.getElementById('ai-lbl');
-  if(pct>=70){lbl.textContent='TINGGI — Segera tangani sebelum menyebar!';lbl.className='mlbl danger';}
-  else if(pct>=40){lbl.textContent='SEDANG — Perlu penanganan dalam 3–5 hari';lbl.className='mlbl warn';}
+  if(level===2){lbl.textContent='TINGGI — Segera tangani sebelum menyebar!';lbl.className='mlbl danger';}
+  else if(level===1){lbl.textContent='SEDANG — Perlu penanganan dalam 3–5 hari';lbl.className='mlbl warn';}
   else{lbl.textContent='RENDAH — Kondisi terkendali, pantau secara rutin';lbl.className='mlbl';}
 
   // Parse penyakit
@@ -707,8 +710,8 @@ function tampilHasilFoto(txt){
   var ksM=txt.match(/KESIMPULAN:\s*([^\n]+)/i);
   var ks=ksM?ksM[1].trim():'Analisis foto selesai.';
   var bn=document.getElementById('ai-banner');
-  if(st==='KRITIS'||pct>=70){bn.className='banner danger';bn.textContent='KRITIS — '+ks;}
-  else if(st==='WASPADA'||pct>=40){bn.className='banner warn';bn.textContent='WASPADA — '+ks;}
+  if(level===2){bn.className='banner danger';bn.textContent='KRITIS — '+ks;}
+  else if(level===1){bn.className='banner warn';bn.textContent='WASPADA — '+ks;}
   else{bn.className='banner ok';bn.textContent='AMAN — '+ks;}
 
   tampil('hasil-foto');
