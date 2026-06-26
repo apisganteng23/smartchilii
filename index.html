@@ -619,6 +619,9 @@ panggilAIDenganRetry({
 }
 
 function tampilHasilFoto(txt){
+  console.log('=== JAWABAN MENTAH DARI AI ===');
+  console.log(txt);
+  console.log('=== AKHIR JAWABAN MENTAH ===');
   // Parse tingkat serangan
   var pctM=txt.match(/TINGKAT:\s*(\d+)/i);
   var pct=pctM?Math.min(100,Math.max(0,parseInt(pctM[1]))):40;
