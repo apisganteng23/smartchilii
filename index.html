@@ -535,11 +535,12 @@ function analisisFoto(){
     +'ILMIAH: [-]\nLEVEL: [-]\nGEJALA: [-]\n'
     +'===END2===\n\n'
     +'===REKOMENDASI===\n'
-    +'1. [tindakan segera]\n'
-    +'2. [nama obat/fungisida/insektisida spesifik]\n'
-    +'3. [cara aplikasi dan dosis]\n'
-    +'4. [pencegahan penyebaran]\n'
-    +'5. [langkah jangka panjang]\n'
+    +'1. [tindakan segera yang bisa dilakukan petani hari ini]\n'
+    +'2. [golongan/jenis bahan aktif fungisida atau insektisida yang umum dipakai untuk penyakit ini, contoh: golongan tembaga, mankozeb, atau sejenisnya — bukan merek dagang]\n'
+    +'3. [cara aplikasi umum: waktu penyemprotan, frekuensi, dan catatan bahwa dosis pasti mengikuti label kemasan produk]\n'
+    +'4. [pencegahan penyebaran ke tanaman lain]\n'
+    +'5. [langkah jangka panjang/pencegahan musim berikutnya]\n'
+    +'WAJIB isi kelima poin di atas dengan jawaban konkret, JANGAN hanya menyarankan konsultasi ke penyuluh sebagai satu-satunya jawaban.\n'
     +'===ENDREKOM===\n\n'
     +'KESIMPULAN: [satu kalimat ringkasan]';
 
@@ -677,9 +678,17 @@ function tampilHasilFoto(txt){
   rEl.innerHTML='';
   var reM=txt.match(/===REKOMENDASI===([\s\S]*?)===ENDREKOM===/i);
   if(reM){
-    var lines=reM[1].split('\n').filter(function(l){return l.trim().match(/^\d+\./);});
+    var rawLines=reM[1].split('\n');
+    var lines=[];
+    rawLines.forEach(function(l){
+      // Bersihkan markdown (* ** - dll) di depan baris, baru cek apakah berupa item bernomor
+      var bersih=l.trim().replace(/^[\*\-\s]+/,'');
+      if(bersih.match(/^\d+[\.\)]/)){
+        lines.push(bersih);
+      }
+    });
     lines.forEach(function(ln,i){
-      var teks=ln.replace(/^\d+\.\s*/,'').trim();
+      var teks=ln.replace(/^\d+[\.\)]\s*/,'').replace(/\*\*/g,'').trim();
       if(!teks)return;
       var row=document.createElement('div');
       row.className='rekom-item';
@@ -688,7 +697,7 @@ function tampilHasilFoto(txt){
     });
   }
   if(!rEl.children.length){
-    rEl.innerHTML='<div class="rekom-item"><div class="rekom-num">1</div><div>Konsultasikan dengan penyuluh pertanian setempat.</div></div>';
+    rEl.innerHTML='<div class="rekom-item"><div class="rekom-num">1</div><div>AI tidak memberikan rincian rekomendasi untuk kasus ini. Konsultasikan dengan penyuluh pertanian setempat untuk penanganan yang tepat.</div></div>';
   }
 
   // Banner kesimpulan
