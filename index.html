@@ -475,7 +475,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 </nav>
 
 <!-- ======== TAB RIWAYAT ======== -->
-<div id="pg-riwayat" class="page" style="display:none">
+<div id="pg-riwayat" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
     <div style="font-weight:700;font-size:15px;color:#1a4d1a">&#128203; Riwayat Analisis AI</div>
     <button onclick="hapusSemuaRiwayat()" style="background:none;border:1px solid #e53935;color:#e53935;border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;font-family:inherit">Hapus Semua</button>
@@ -500,7 +500,7 @@ window.addEventListener('load',function(){
 var PROXY_URL = 'https://smartchili-vercel-proxy.vercel.app/api/proxy';
 function goTab(id,idx){
   var i,p=document.querySelectorAll('.page'),t=document.querySelectorAll('.tab'),b=document.querySelectorAll('.bn');
-  for(i=0;i<p.length;i++)p[i].classList.remove('on');
+  for(i=0;i<p.length;i++){p[i].classList.remove('on');p[i].style.display='';}
   for(i=0;i<t.length;i++)t[i].classList.remove('on');
   for(i=0;i<b.length;i++)b[i].classList.remove('on');
   document.getElementById('pg-'+id).classList.add('on');
