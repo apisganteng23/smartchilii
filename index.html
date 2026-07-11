@@ -120,6 +120,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 .rekom-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #e0eee0;font-size:13px;line-height:1.45}
 .rekom-item:last-child{border-bottom:none}
 .rekom-num{width:22px;height:22px;min-width:22px;background:#2d7a2d;color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* ── RIWAYAT ── */
+.rw-item{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:13px 13px;display:flex;flex-direction:column;gap:7px;border-left:4px solid #2d7a2d}
+.rw-item.warn{border-left-color:#fb8c00}
+.rw-item.danger{border-left-color:#e53935}
+.rw-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.rw-tgl{font-size:11px;color:#888}
+.rw-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.rw-badge.ok{background:#d4edda;color:#1a4d1a}
+.rw-badge.warn{background:#fff3e0;color:#e65100}
+.rw-badge.danger{background:#fde8e8;color:#e53935}
+.rw-penyakit{font-size:13px;font-weight:700;color:#1a4d1a}
+.rw-gejala{font-size:12px;color:#555;line-height:1.4}
+.rw-rekom{font-size:12px;color:#2d5016;background:#e8f5e8;border-radius:7px;padding:7px 9px;line-height:1.5}
+.rw-img{width:100%;max-height:140px;object-fit:cover;border-radius:8px}
+.rw-del{background:none;border:none;color:#ccc;font-size:16px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0}
+.rw-del:active{color:#e53935}
+.rw-empty{text-align:center;padding:40px 20px;color:#888;font-size:13px;line-height:1.6}
+.rw-save-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:12px;background:#2d7a2d;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit;min-height:46px;touch-action:manipulation}
+.rw-save-btn:active{background:#1a4d1a}
 </style>
 </head>
 <body>
@@ -132,6 +152,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
   <button class="tab on" onclick="goTab('deteksi',0)">&#128269; Deteksi</button>
   <button class="tab" onclick="goTab('kalender',1)">&#128197; Kalender</button>
   <button class="tab" onclick="goTab('analisisekonomi',2)">&#128202; Analisis Ekonomi</button>
+  <button class="tab" onclick="goTab('riwayat',3)">&#128203; Riwayat</button>
 </div>
 
 <div class="wrap">
@@ -213,7 +234,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 
       <div class="banner" id="ai-banner">-</div>
 
-      <button class="btn" style="margin-top:12px;background:#2d5016;font-size:14px" onclick="hapusFoto()">
+      <button class="rw-save-btn" id="btn-simpan-riwayat" onclick="simpanKeRiwayat()" style="display:none">
+        &#128190; Simpan ke Riwayat
+      </button>
+
+      <button class="btn" style="margin-top:10px;background:#2d5016;font-size:14px" onclick="hapusFoto()">
         &#128247; Analisis Foto Lain
       </button>
     </div>
@@ -446,7 +471,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
   <button class="bn on" onclick="goTab('deteksi',0)">&#127807;<br/><small>Deteksi</small></button>
   <button class="bn" onclick="goTab('kalender',1)">&#128197;<br/><small>Kalender</small></button>
   <button class="bn" onclick="goTab('analisisekonomi',2)">&#128202;<br/><small>Analisis Ekonomi</small></button>
+  <button class="bn" onclick="goTab('riwayat',3)">&#128203;<br/><small>Riwayat</small></button>
 </nav>
+
+<!-- ======== TAB RIWAYAT ======== -->
+<div id="pg-riwayat" class="page" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <div style="font-weight:700;font-size:15px;color:#1a4d1a">&#128203; Riwayat Analisis AI</div>
+    <button onclick="hapusSemuaRiwayat()" style="background:none;border:1px solid #e53935;color:#e53935;border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;font-family:inherit">Hapus Semua</button>
+  </div>
+  <div style="font-size:12px;color:#888;margin-bottom:8px">Tersimpan di perangkat ini. Tidak hilang meski halaman di-refresh.</div>
+  <div id="rw-list"></div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
@@ -730,6 +766,36 @@ function tampilHasilFoto(txt){
   else if(level===1){bn.className='banner warn';bn.textContent='WASPADA — '+ks;}
   else{bn.className='banner ok';bn.textContent='AMAN — '+ks;}
 
+  // Siapkan data riwayat
+  var namaP1='';
+  var gejalaP1='';
+  var rekomP1='';
+  var m1=txt.match(/===PENYAKIT1===([\s\S]*?)===END1===/i);
+  if(m1){
+    namaP1=((m1[1].match(/NAMA:\s*([^\n]+)/i)||[])[1]||'').replace(/-/g,'').trim();
+    gejalaP1=((m1[1].match(/GEJALA:\s*([^\n]+)/i)||[])[1]||'').trim();
+  }
+  var reM2=txt.match(/===REKOMENDASI===([\s\S]*?)===ENDREKOM===/i);
+  if(reM2){
+    var rl2=reM2[1].split('\n').filter(function(l){return l.trim().match(/^\d+[\.\)]/);});
+    if(rl2.length) rekomP1=rl2[0].replace(/^\d+[\.\)]\s*/,'').replace(/\*\*/g,'').trim();
+  }
+  var waktuNow=new Date();
+  var waktuStr=waktuNow.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})+', '+waktuNow.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  riwayatData={
+    waktu: waktuStr,
+    penyakit: namaP1||'Tidak terdeteksi penyakit signifikan',
+    gejala: gejalaP1,
+    rekom: rekomP1,
+    pct: pct,
+    level: level,
+    imgSrc: document.getElementById('hasil-img').src||''
+  };
+
+  // Tampilkan tombol simpan
+  var btnSimpan=document.getElementById('btn-simpan-riwayat');
+  if(btnSimpan){btnSimpan.style.display='flex';btnSimpan.textContent='💾 Simpan ke Riwayat';btnSimpan.disabled=false;}
+
   tampil('hasil-foto');
 }
 
@@ -894,6 +960,85 @@ function buatGrafik(){
     {label:'Prediksi',data:pr,borderColor:'#f5c518',borderDash:[5,4],borderWidth:2,pointRadius:2,tension:0.4,fill:false,spanGaps:false}
   ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+(c.raw?'Rp '+c.raw.toLocaleString('id-ID'):'-');}}}},scales:{y:{min:25000,ticks:{callback:function(v){return(v/1000)+'k';},font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'}},x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false}}}}});
 }
+
+/* ── RIWAYAT ── */
+var RW_KEY = 'smartchili_riwayat';
+var riwayatData = null; // cache hasil AI terakhir untuk disimpan
+
+function getRiwayat(){
+  try{ return JSON.parse(localStorage.getItem(RW_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+function setRiwayat(arr){
+  try{ localStorage.setItem(RW_KEY, JSON.stringify(arr)); }
+  catch(e){}
+}
+
+function simpanKeRiwayat(){
+  if(!riwayatData){ alert('Tidak ada data yang bisa disimpan.'); return; }
+  var arr = getRiwayat();
+  arr.unshift(riwayatData); // tambah di paling atas
+  if(arr.length > 50) arr = arr.slice(0,50); // maks 50 entri
+  setRiwayat(arr);
+  document.getElementById('btn-simpan-riwayat').textContent = '✅ Tersimpan!';
+  document.getElementById('btn-simpan-riwayat').disabled = true;
+  setTimeout(function(){
+    var b = document.getElementById('btn-simpan-riwayat');
+    if(b){ b.textContent='💾 Simpan ke Riwayat'; b.disabled=false; }
+  }, 2500);
+}
+
+function renderRiwayat(){
+  var arr = getRiwayat();
+  var el = document.getElementById('rw-list');
+  if(!el) return;
+  if(!arr.length){
+    el.innerHTML = '<div class="rw-empty">&#128247;<br/><br/>Belum ada riwayat analisis.<br/>Lakukan analisis foto AI lalu klik<br/><strong>"Simpan ke Riwayat"</strong>.</div>';
+    return;
+  }
+  var html = '';
+  arr.forEach(function(d, i){
+    var cls = d.level===2?'danger':d.level===1?'warn':'';
+    var bdgCls = d.level===2?'danger':d.level===1?'warn':'ok';
+    var bdgTxt = d.level===2?'KRITIS':d.level===1?'WASPADA':'AMAN';
+    html += '<div class="rw-item '+cls+'" style="margin-bottom:10px">';
+    html += '<div class="rw-hdr">';
+    html += '<div>';
+    if(d.imgSrc) html += '<img class="rw-img" src="'+d.imgSrc+'" style="margin-bottom:7px"/>';
+    html += '<div class="rw-penyakit">'+(d.penyakit||'Tidak terdeteksi penyakit')+'</div>';
+    html += '<div class="rw-tgl">'+d.waktu+'</div>';
+    html += '</div>';
+    html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">';
+    html += '<span class="rw-badge '+bdgCls+'">'+bdgTxt+' '+d.pct+'%</span>';
+    html += '<button class="rw-del" onclick="hapusSatuRiwayat('+i+')" title="Hapus">&#128465;</button>';
+    html += '</div></div>';
+    if(d.gejala) html += '<div class="rw-gejala">'+d.gejala+'</div>';
+    if(d.rekom) html += '<div class="rw-rekom">&#128138; <strong>Rekomendasi:</strong> '+d.rekom+'</div>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function hapusSatuRiwayat(idx){
+  if(!confirm('Hapus entri ini dari riwayat?')) return;
+  var arr = getRiwayat();
+  arr.splice(idx, 1);
+  setRiwayat(arr);
+  renderRiwayat();
+}
+
+function hapusSemuaRiwayat(){
+  if(!confirm('Hapus semua riwayat analisis? Tindakan ini tidak bisa dibatalkan.')) return;
+  setRiwayat([]);
+  renderRiwayat();
+}
+
+// Panggil renderRiwayat setiap kali tab Riwayat dibuka
+var _goTabOri = goTab;
+goTab = function(id, idx){
+  _goTabOri(id, idx);
+  if(id === 'riwayat') renderRiwayat();
+};
 
 </script>
 </body>
