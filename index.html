@@ -506,6 +506,7 @@ function goTab(id,idx){
   document.getElementById('pg-'+id).classList.add('on');
   t[idx].classList.add('on'); b[idx].classList.add('on');
   window.scrollTo(0,0);
+  if(id==='riwayat') renderRiwayat();
 }
 function setMode(mode,el){
   document.querySelectorAll('.tsw').forEach(function(b){b.classList.remove('on');});
@@ -788,8 +789,8 @@ function tampilHasilFoto(txt){
     gejala: gejalaP1,
     rekom: rekomP1,
     pct: pct,
-    level: level,
-    imgSrc: document.getElementById('hasil-img').src||''
+    level: level
+    // imgSrc sengaja tidak disimpan karena ukuran base64 terlalu besar untuk localStorage
   };
 
   // Tampilkan tombol simpan
@@ -976,16 +977,20 @@ function setRiwayat(arr){
 
 function simpanKeRiwayat(){
   if(!riwayatData){ alert('Tidak ada data yang bisa disimpan.'); return; }
-  var arr = getRiwayat();
-  arr.unshift(riwayatData); // tambah di paling atas
-  if(arr.length > 50) arr = arr.slice(0,50); // maks 50 entri
-  setRiwayat(arr);
-  document.getElementById('btn-simpan-riwayat').textContent = '✅ Tersimpan!';
-  document.getElementById('btn-simpan-riwayat').disabled = true;
-  setTimeout(function(){
-    var b = document.getElementById('btn-simpan-riwayat');
-    if(b){ b.textContent='💾 Simpan ke Riwayat'; b.disabled=false; }
-  }, 2500);
+  try {
+    var arr = getRiwayat();
+    arr.unshift(riwayatData);
+    if(arr.length > 50) arr = arr.slice(0,50);
+    localStorage.setItem(RW_KEY, JSON.stringify(arr));
+    var btnS = document.getElementById('btn-simpan-riwayat');
+    if(btnS){ btnS.innerHTML='✅ Tersimpan di Riwayat!'; btnS.disabled=true; btnS.style.background='#388e3c'; }
+    setTimeout(function(){
+      var b = document.getElementById('btn-simpan-riwayat');
+      if(b){ b.innerHTML='💾 Simpan ke Riwayat'; b.disabled=false; b.style.background='#2d7a2d'; }
+    }, 3000);
+  } catch(e) {
+    alert('Gagal menyimpan: '+e.message);
+  }
 }
 
 function renderRiwayat(){
@@ -1003,17 +1008,16 @@ function renderRiwayat(){
     var bdgTxt = d.level===2?'KRITIS':d.level===1?'WASPADA':'AMAN';
     html += '<div class="rw-item '+cls+'" style="margin-bottom:10px">';
     html += '<div class="rw-hdr">';
-    html += '<div>';
-    if(d.imgSrc) html += '<img class="rw-img" src="'+d.imgSrc+'" style="margin-bottom:7px"/>';
-    html += '<div class="rw-penyakit">'+(d.penyakit||'Tidak terdeteksi penyakit')+'</div>';
-    html += '<div class="rw-tgl">'+d.waktu+'</div>';
+    html += '<div style="flex:1">';
+    html += '<div class="rw-penyakit">'+(d.penyakit||'Tidak terdeteksi')+'</div>';
+    html += '<div class="rw-tgl">🕐 '+d.waktu+'</div>';
     html += '</div>';
     html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">';
     html += '<span class="rw-badge '+bdgCls+'">'+bdgTxt+' '+d.pct+'%</span>';
-    html += '<button class="rw-del" onclick="hapusSatuRiwayat('+i+')" title="Hapus">&#128465;</button>';
+    html += '<button class="rw-del" onclick="hapusSatuRiwayat('+i+')" title="Hapus">🗑️</button>';
     html += '</div></div>';
-    if(d.gejala) html += '<div class="rw-gejala">'+d.gejala+'</div>';
-    if(d.rekom) html += '<div class="rw-rekom">&#128138; <strong>Rekomendasi:</strong> '+d.rekom+'</div>';
+    if(d.gejala) html += '<div class="rw-gejala">📋 '+d.gejala+'</div>';
+    if(d.rekom) html += '<div class="rw-rekom">💊 <strong>Rekomendasi:</strong> '+d.rekom+'</div>';
     html += '</div>';
   });
   el.innerHTML = html;
@@ -1033,12 +1037,7 @@ function hapusSemuaRiwayat(){
   renderRiwayat();
 }
 
-// Panggil renderRiwayat setiap kali tab Riwayat dibuka
-var _goTabOri = goTab;
-goTab = function(id, idx){
-  _goTabOri(id, idx);
-  if(id === 'riwayat') renderRiwayat();
-};
+// Panggil renderRiwayat setiap kali tab Riwayat dibuka (langsung diintegrasikan ke goTab)
 
 </script>
 </body>
