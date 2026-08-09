@@ -357,110 +357,88 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 <!-- ======== TAB ANALISIS EKONOMI (gabungan) ======== -->
 <div id="pg-analisisekonomi" class="page">
 
-  <!-- SUB-SECTION 1: ANALISIS USAHA TANI -->
-  <div style="background:#1a4d1a;color:#fff;padding:9px 14px;border-radius:10px;margin-bottom:10px;font-weight:700;font-size:14px">&#128202; Analisis Usaha Tani</div>
+  <div style="background:#1a4d1a;color:#fff;padding:9px 14px;border-radius:10px;margin-bottom:10px;font-weight:700;font-size:14px">&#128176; Analisis Ekonomi Usahatani Cabai</div>
+
   <div class="card">
     <div class="ct">&#128221; Input Data Analisis</div>
-    <div class="fr">
-      <div class="fg"><label>Produksi (Ton/Ha)</label><input type="number" id="a-prod" value="8" step="0.5" min="1" inputmode="decimal"/></div>
-      <div class="fg"><label>Harga Jual (Rp/kg)</label><input type="number" id="a-harga" value="42000" step="1000" inputmode="numeric"/></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Luas Lahan (Ha)</label><input type="number" id="a-luas" value="1" step="0.1" min="0.1" inputmode="decimal"/></div>
-      <div class="fg"><label>Biaya Produksi (Rp)</label><input type="number" id="a-biaya" value="50000000" step="1000000" inputmode="numeric"/></div>
-    </div>
-    <div class="fg">
-      <label>Risiko Kerugian Hama: <strong id="a-val">25%</strong></label>
-      <input type="range" id="a-risiko" min="0" max="100" value="25" oninput="document.getElementById('a-val').textContent=this.value+'%'"/>
-    </div>
-    <div class="fg"><label>Musim Tanam</label>
-      <select id="a-musim"><option value="hujan">Musim Hujan (Oktober - Maret)</option><option value="kering">Musim Kering (April - September)</option></select>
-    </div>
-    <button class="btn" onclick="doAnalisis()">&#128202; Hitung Analisis</button>
-  </div>
-  <div id="ha" class="hasil">
-    <div class="ct">&#128202; Detail Analisis</div>
-    <div class="g4">
-      <div class="g4i"><small>Total Produksi</small><strong id="ha-prod">-</strong></div>
-      <div class="g4i"><small>Harga / kg</small><strong id="ha-harga">-</strong></div>
-      <div class="g4i"><small>Total Pendapatan</small><strong id="ha-pend">-</strong></div>
-      <div class="g4i"><small>Total Biaya</small><strong id="ha-biaya">-</strong></div>
-    </div>
-    <div class="rkbox">
-      <div class="boxt">Analisis Ringkas</div>
-      <div class="rkrow"><span>Pendapatan Kotor</span><strong id="ha-r-pend">-</strong></div>
-      <div class="rkrow minus"><span>(-) Biaya Produksi</span><strong id="ha-r-biaya">-</strong></div>
-      <div class="rkrow minus"><span>(-) Kerugian Hama</span><strong id="ha-r-rugi">-</strong></div>
-      <div class="rkrow total"><span>Keuntungan Bersih</span><strong id="ha-r-untung">-</strong></div>
-      <div class="rkrow"><span>ROI</span><strong id="ha-r-roi">-</strong></div>
-    </div>
-    <div class="mbox">
-      <div class="mhdr"><span>Margin Keuntungan</span><strong id="ha-margin">0%</strong></div>
-      <div class="mtrack"><div class="mfill" id="ha-fill" style="width:0%"></div></div>
-    </div>
-    <div class="rbox" style="margin-top:11px"><div class="boxt">Rekomendasi</div><ul id="ha-rekom"></ul></div>
-    <button class="sbtn" id="ha-btn" style="background:#1a4d1a">-</button>
-  </div>
 
-  <!-- DIVIDER -->
-  <div style="border-top:2px dashed #c8dcc8;margin:18px 0"></div>
-
-  <!-- SUB-SECTION 2: ANALISIS EKONOMI (Techno-Economic) -->
-  <div style="background:#1a4d1a;color:#fff;padding:9px 14px;border-radius:10px;margin-bottom:10px;font-weight:700;font-size:14px">&#128176; Analisis Ekonomi &amp; Sistem Pertanian</div>
-  <div class="card">
-    <div class="ct">&#128221; Input Data Ekonomi</div>
     <div class="fr">
-      <div class="fg"><label>Lokasi / Wilayah</label><input type="text" id="e-lokasi" placeholder="Jawa Timur" autocomplete="off"/></div>
-      <div class="fg"><label>Periode Tanam</label>
-        <select id="e-bulan"><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
+      <div class="fg"><label>Produksi (Ton/Ha)</label><input type="number" id="u-prod" value="8" step="0.5" min="1" inputmode="decimal"/></div>
+      <div class="fg"><label>Harga Jual (Rp/kg)</label><input type="number" id="u-harga" value="42000" step="1000" inputmode="numeric"/></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Luas Lahan (Ha)</label><input type="number" id="u-luas" value="1" step="0.1" min="0.1" inputmode="decimal"/></div>
+      <div class="fg"><label>Biaya Produksi/Ha (Rp)</label><input type="number" id="u-biaya" value="50000000" step="1000000" inputmode="numeric"/></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Lokasi / Wilayah</label><input type="text" id="u-lokasi" placeholder="Yogyakarta" autocomplete="off"/></div>
+      <div class="fg"><label>Bulan Tanam</label>
+        <select id="u-bulan"><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
       </div>
     </div>
-    <div class="fr">
-      <div class="fg"><label>Luas Lahan (Ha)</label><input type="number" id="e-luas" value="1" min="0.1" step="0.1" inputmode="decimal"/></div>
-      <div class="fg"><label>Harga Jual (Rp/kg)</label><input type="number" id="e-harga" value="42000" step="1000" inputmode="numeric"/></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Produksi (Ton/Ha)</label><input type="number" id="e-prod" value="8" min="1" step="0.5" inputmode="decimal"/></div>
-      <div class="fg"><label>Biaya/Ha (Rp)</label><input type="number" id="e-biaya" value="50000000" step="1000000" inputmode="numeric"/></div>
-    </div>
+
     <div class="fg">
-      <label>Risiko Serangan Hama: <strong id="e-val">15%</strong></label>
-      <input type="range" id="e-risiko" min="0" max="100" value="15" oninput="document.getElementById('e-val').textContent=this.value+'%'"/>
+      <label>Risiko Kerugian Hama: <strong id="u-val">20%</strong></label>
+      <input type="range" id="u-risiko" min="0" max="100" value="20" oninput="document.getElementById('u-val').textContent=this.value+'%'"/>
       <div class="hint"><span style="color:#2d7a2d">Rendah 0-20%</span><span style="color:#fb8c00">Sedang 21-40%</span><span style="color:#e53935">Tinggi &gt;40%</span></div>
     </div>
-    <div class="fg"><label>Sistem Pertanian</label>
-      <select id="e-sistem"><option value="1.00">Konvensional (standar)</option><option value="0.85">Organik / Ramah Lingkungan</option><option value="1.15">Intensif / Teknologi Modern</option></select>
+
+    <div class="fr">
+      <div class="fg"><label>Musim Tanam</label>
+        <select id="u-musim">
+          <option value="hujan">Musim Hujan (Oktober - Maret)</option>
+          <option value="kering">Musim Kering (April - September)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Sistem Pertanian</label>
+        <select id="u-sistem">
+          <option value="1.00">Konvensional (standar)</option>
+          <option value="0.85">Organik / Ramah Lingkungan</option>
+          <option value="1.15">Intensif / Teknologi Modern</option>
+        </select>
+      </div>
     </div>
-    <button class="btn" onclick="doEkonomi()">&#128176; Hitung Ekonomi</button>
+
+    <button class="btn" onclick="doAnalisisGabung()">&#128202; Hitung Analisis Ekonomi</button>
   </div>
-  <div id="he-t" class="hasil">
-    <div class="ct">Analisis Techno-Economic</div>
-    <div class="rows">
-      <div class="row"><span>Lokasi</span><strong id="he-lokasi">-</strong></div>
-      <div class="row"><span>Periode Tanam</span><strong id="he-bulan">-</strong></div>
-      <div class="row"><span>Estimasi Panen</span><strong id="he-panen">-</strong></div>
-      <div class="row"><span>Sistem Pertanian</span><strong id="he-sistem">-</strong></div>
-      <div class="row"><span>Luas Lahan</span><strong id="he-luas">-</strong></div>
-      <div class="row"><span>Prediksi Harga</span><strong id="he-harga">-</strong></div>
-      <div class="row"><span>Risiko Serangan</span><strong id="he-risiko">-</strong></div>
+
+  <div id="hu" class="hasil">
+    <div class="rows" style="margin-bottom:12px">
+      <div class="row"><span>Lokasi</span><strong id="hu-lokasi">-</strong></div>
+      <div class="row"><span>Periode Tanam</span><strong id="hu-bulan">-</strong></div>
+      <div class="row"><span>Estimasi Panen</span><strong id="hu-panen">-</strong></div>
+      <div class="row"><span>Sistem Pertanian</span><strong id="hu-sistem">-</strong></div>
+      <div class="row"><span>Musim Tanam</span><strong id="hu-musim">-</strong></div>
+      <div class="row"><span>Risiko Serangan</span><strong id="hu-risiko">-</strong></div>
     </div>
-  </div>
-  <div id="he-k" class="hasil">
-    <div class="ct">&#129518; Hasil Kalkulator Keuntungan</div>
-    <div class="ktbl">
-      <div class="krow"><span>Total Produksi</span><strong id="he-k-prod">-</strong></div>
-      <div class="krow"><span>Harga Jual per kg</span><strong id="he-k-harga">-</strong></div>
-      <div class="krow"><span>Total Pendapatan Kotor</span><strong id="he-k-pend">-</strong></div>
-      <div class="krow minus"><span>(-) Biaya Produksi</span><strong id="he-k-biaya">-</strong></div>
-      <div class="krow minus"><span>(-) Kerugian Hama</span><strong id="he-k-rugi">-</strong></div>
-      <div class="krow profit"><span>&#128176; Keuntungan Bersih</span><strong id="he-k-untung">-</strong></div>
-      <div class="krow"><span>ROI</span><strong id="he-k-roi">-</strong></div>
+
+    <div class="g4">
+      <div class="g4i"><small>Total Produksi</small><strong id="hu-prod">-</strong></div>
+      <div class="g4i"><small>Harga / kg</small><strong id="hu-harga">-</strong></div>
+      <div class="g4i"><small>Total Pendapatan</small><strong id="hu-pend">-</strong></div>
+      <div class="g4i"><small>Total Biaya</small><strong id="hu-tbiaya">-</strong></div>
     </div>
-    <div class="mbox" style="margin-top:12px">
-      <div class="mhdr"><span>Margin Keuntungan</span><strong id="he-margin">0%</strong></div>
-      <div class="mtrack"><div class="mfill" id="he-fill" style="width:0%"></div></div>
+
+    <div class="rkbox">
+      <div class="boxt">Analisis Ringkas</div>
+      <div class="rkrow"><span>Pendapatan Kotor</span><strong id="hu-r-pend">-</strong></div>
+      <div class="rkrow minus"><span>(-) Biaya Produksi</span><strong id="hu-r-biaya">-</strong></div>
+      <div class="rkrow minus"><span>(-) Kerugian Hama</span><strong id="hu-r-rugi">-</strong></div>
+      <div class="rkrow total"><span>Keuntungan Bersih</span><strong id="hu-r-untung">-</strong></div>
+      <div class="rkrow"><span>ROI</span><strong id="hu-r-roi">-</strong></div>
     </div>
-    <div class="rbox" style="margin-top:11px"><div class="boxt">Kesimpulan Ekonomi</div><ul id="he-simpul"></ul></div>
+
+    <div class="mbox">
+      <div class="mhdr"><span>Margin Keuntungan</span><strong id="hu-margin">0%</strong></div>
+      <div class="mtrack"><div class="mfill" id="hu-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="rbox" style="margin-top:11px">
+      <div class="boxt">&#128204; Rekomendasi &amp; Kesimpulan Ekonomi</div>
+      <ul id="hu-rekom"></ul>
+    </div>
+
+    <button class="sbtn" id="hu-btn" style="background:#1a4d1a">-</button>
   </div>
 
 </div>
@@ -863,89 +841,85 @@ function doKalender(){
   tampil('hk');
 }
 
-/* ── ANALISIS ── */
-function doAnalisis(){
-  var prod=parseFloat(document.getElementById('a-prod').value)||8;
-  var harga=parseFloat(document.getElementById('a-harga').value)||42000;
-  var luas=parseFloat(document.getElementById('a-luas').value)||1;
-  var biaya=parseFloat(document.getElementById('a-biaya').value)||50000000;
-  var rsk=parseFloat(document.getElementById('a-risiko').value)||25;
-  var musim=document.getElementById('a-musim').value;
-  var kg=prod*1000*luas,pend=kg*harga,tbiy=biaya*luas,rugi=pend*(rsk/100),untung=pend-tbiy-rugi;
-  var margin=pend>0?Math.max(0,Math.round((untung/pend)*100)):0;
-  var roi=tbiy>0?Math.round((untung/tbiy)*100):0;
-  document.getElementById('ha-prod').textContent=kg.toLocaleString('id-ID')+' kg';
-  document.getElementById('ha-harga').textContent=rp(harga);
-  document.getElementById('ha-pend').textContent=rp(pend);
-  document.getElementById('ha-biaya').textContent=rp(tbiy);
-  document.getElementById('ha-r-pend').textContent=rp(pend);
-  document.getElementById('ha-r-biaya').textContent=rp(tbiy);
-  document.getElementById('ha-r-rugi').textContent=rp(rugi);
-  document.getElementById('ha-r-untung').textContent=rp(untung);
-  document.getElementById('ha-r-roi').textContent=roi+'%';
-  document.getElementById('ha-margin').textContent=margin+'%';
-  var f=document.getElementById('ha-fill');
-  f.style.width=Math.min(margin,100)+'%';
-  f.className='mfill'+(margin<20?' danger':margin<40?' warn':'');
-  var rh='';
-  if(untung>0){rh+='<li><span class="dot g"></span><div>Usaha tani <strong>menguntungkan</strong> — laba '+rp(untung)+'</div></li>';rh+='<li><span class="dot g"></span><div>ROI <strong>'+roi+'%</strong> — '+(roi>=100?'Modal kembali 1 musim tanam':roi>=50?'Hasil cukup baik':'Perlu efisiensi biaya')+'</div></li>';}
-  else{rh+='<li><span class="dot r"></span><div>Estimasi <strong>rugi '+rp(Math.abs(untung))+'</strong> — tinjau biaya dan harga jual</div></li>';rh+='<li><span class="dot o"></span><div>Kurangi biaya produksi atau naikkan harga jual</div></li>';}
-  if(rsk>40)rh+='<li><span class="dot o"></span><div>Risiko hama '+rsk+'% tinggi — terapkan pengendalian hama terpadu</div></li>';
-  rh+='<li><span class="dot g"></span><div>Musim <strong>'+(musim==='hujan'?'Hujan — waspadai penyakit jamur':'Kering — pastikan air irigasi cukup')+'</strong></div></li>';
-  document.getElementById('ha-rekom').innerHTML=rh;
-  var btn=document.getElementById('ha-btn');
-  if(untung>0){btn.textContent='Analisis Positif! Laba '+rp(untung)+' — ROI '+roi+'%';btn.style.background='#1a4d1a';}
-  else{btn.textContent='Estimasi Rugi '+rp(Math.abs(untung))+' — Perlu Evaluasi';btn.style.background='#b71c1c';}
-  tampil('ha');
+/* ── ANALISIS EKONOMI GABUNGAN ── */
+function doAnalisisGabung(){
+  var prod   = parseFloat(document.getElementById('u-prod').value)   || 8;
+  var harga  = parseFloat(document.getElementById('u-harga').value)  || 42000;
+  var luas   = parseFloat(document.getElementById('u-luas').value)   || 1;
+  var biayaH = parseFloat(document.getElementById('u-biaya').value)  || 50000000;
+  var risiko = parseInt(document.getElementById('u-risiko').value)    || 20;
+  var musim  = document.getElementById('u-musim').value;
+  var lokasi = document.getElementById('u-lokasi').value || '-';
+  var bulan  = document.getElementById('u-bulan').value;
+  var sel    = document.getElementById('u-sistem');
+  var multi  = parseFloat(sel.value) || 1.00;
+  var sis    = sel.options[sel.selectedIndex].text.split('(')[0].trim();
+
+  var bi   = BLN.indexOf(bulan);
+  var pBln = BLN[(bi + 3) % 12];
+
+  var kg     = luas * prod * 1000;
+  var pend   = kg * harga;
+  var tbiy   = biayaH * luas;
+  var rugi   = pend * (risiko / 100);
+  var untung = (pend - tbiy - rugi) * multi;
+  var margin = pend > 0 ? Math.max(0, Math.round((untung / pend) * 100)) : 0;
+  var roi    = tbiy > 0 ? Math.round((untung / tbiy) * 100) : 0;
+
+  document.getElementById('hu-lokasi').textContent = lokasi;
+  document.getElementById('hu-bulan').textContent  = bulan;
+  document.getElementById('hu-panen').textContent  = pBln;
+  document.getElementById('hu-sistem').textContent = sis;
+  document.getElementById('hu-musim').textContent  = musim === 'hujan' ? 'Musim Hujan' : 'Musim Kering';
+  var rEl = document.getElementById('hu-risiko');
+  rEl.textContent = risiko + '% (' + (risiko <= 20 ? 'Rendah' : risiko <= 40 ? 'Sedang' : 'Tinggi') + ')';
+  rEl.className   = risiko <= 20 ? 'gt' : risiko <= 40 ? 'ot' : 'rt';
+
+  document.getElementById('hu-prod').textContent    = kg.toLocaleString('id-ID') + ' kg';
+  document.getElementById('hu-harga').textContent   = rp(harga);
+  document.getElementById('hu-pend').textContent    = rp(pend);
+  document.getElementById('hu-tbiaya').textContent  = rp(tbiy);
+
+  document.getElementById('hu-r-pend').textContent  = rp(pend);
+  document.getElementById('hu-r-biaya').textContent = rp(tbiy);
+  document.getElementById('hu-r-rugi').textContent  = rp(rugi);
+  document.getElementById('hu-r-untung').textContent= rp(untung);
+  document.getElementById('hu-r-roi').textContent   = roi + '%';
+
+  document.getElementById('hu-margin').textContent  = margin + '%';
+  var f = document.getElementById('hu-fill');
+  f.style.width = Math.min(margin, 100) + '%';
+  f.className   = 'mfill' + (margin < 20 ? ' danger' : margin < 40 ? ' warn' : '');
+
+  var rh = '';
+  if (untung > 0) {
+    rh += '<li><span class="dot g"></span><div>Usaha tani <strong>menguntungkan</strong> — laba ' + rp(untung) + '</div></li>';
+    rh += '<li><span class="dot g"></span><div>ROI <strong>' + roi + '%</strong> — ' + (roi >= 100 ? 'Modal kembali dalam 1 musim tanam' : roi >= 50 ? 'Hasil cukup baik' : 'Perlu efisiensi biaya') + '</div></li>';
+    if (multi < 1) rh += '<li><span class="dot g"></span><div>Sistem organik lebih berkelanjutan jangka panjang meski hasil 15% lebih rendah</div></li>';
+    if (multi > 1) rh += '<li><span class="dot g"></span><div>Sistem intensif meningkatkan potensi pendapatan sebesar 15%</div></li>';
+  } else {
+    rh += '<li><span class="dot r"></span><div>Estimasi <strong>rugi ' + rp(Math.abs(untung)) + '</strong> — tinjau kembali biaya dan harga jual</div></li>';
+    rh += '<li><span class="dot o"></span><div>Kurangi biaya produksi atau cari harga jual lebih tinggi</div></li>';
+    rh += '<li><span class="dot o"></span><div>Pertimbangkan KUR Pertanian atau subsidi pupuk bersubsidi</div></li>';
+  }
+  if (risiko > 40) rh += '<li><span class="dot r"></span><div>Risiko hama ' + risiko + '% sangat tinggi — investasikan pada Pengendalian Hama Terpadu (PHT)</div></li>';
+  rh += '<li><span class="dot g"></span><div>Musim tanam: <strong>' + (musim === 'hujan' ? 'Hujan — waspadai penyakit jamur dan layu bakteri' : 'Kering — pastikan ketersediaan air irigasi cukup') + '</strong></div></li>';
+  rh += '<li><span class="dot g"></span><div>Estimasi panen sekitar bulan <strong>' + pBln + '</strong> di lokasi ' + lokasi + '</div></li>';
+
+  document.getElementById('hu-rekom').innerHTML = rh;
+
+  var btn = document.getElementById('hu-btn');
+  if (untung > 0) {
+    btn.innerHTML      = '&#9989; Layak! Laba ' + rp(untung) + ' — ROI ' + roi + '%';
+    btn.style.background = '#1a4d1a';
+  } else {
+    btn.innerHTML      = '&#9888;&#65039; Estimasi Rugi ' + rp(Math.abs(untung)) + ' — Perlu Evaluasi';
+    btn.style.background = '#b71c1c';
+  }
+  tampil('hu');
 }
 
-/* ── EKONOMI ── */
-function doEkonomi(){
-  var lokasi=document.getElementById('e-lokasi').value||'-';
-  var bulan=document.getElementById('e-bulan').value;
-  var luas=parseFloat(document.getElementById('e-luas').value)||1;
-  var harga=parseFloat(document.getElementById('e-harga').value)||42000;
-  var prod=parseFloat(document.getElementById('e-prod').value)||8;
-  var biayaH=parseFloat(document.getElementById('e-biaya').value)||50000000;
-  var risiko=parseInt(document.getElementById('e-risiko').value)||15;
-  var sel=document.getElementById('e-sistem');
-  var multi=parseFloat(sel.value)||1;
-  var sis=sel.options[sel.selectedIndex].text.split('(')[0].trim();
-  var bi=BLN.indexOf(bulan),pBln=BLN[(bi+3)%12];
-  var kg=luas*prod*1000,pend=kg*harga,tbiy=biayaH*luas,rugi=pend*(risiko/100);
-  var untung=(pend-tbiy-rugi)*multi;
-  var margin=pend>0?Math.max(0,Math.round((untung/pend)*100)):0;
-  var roi=tbiy>0?Math.round((untung/tbiy)*100):0;
-  document.getElementById('he-lokasi').textContent=lokasi;
-  document.getElementById('he-bulan').textContent=bulan;
-  document.getElementById('he-panen').textContent=pBln;
-  document.getElementById('he-sistem').textContent=sis;
-  document.getElementById('he-luas').textContent=luas+' Ha';
-  document.getElementById('he-harga').textContent=rp(harga)+' / kg';
-  var rEl=document.getElementById('he-risiko');
-  rEl.textContent=risiko+'% ('+(risiko<=20?'Rendah':risiko<=40?'Sedang':'Tinggi')+')';
-  rEl.className=risiko<=20?'gt':risiko<=40?'ot':'rt';
-  document.getElementById('he-k-prod').textContent=kg.toLocaleString('id-ID')+' kg';
-  document.getElementById('he-k-harga').textContent=rp(harga);
-  document.getElementById('he-k-pend').textContent=rp(pend);
-  document.getElementById('he-k-biaya').textContent=rp(tbiy);
-  document.getElementById('he-k-rugi').textContent=rp(rugi);
-  document.getElementById('he-k-untung').textContent=rp(untung);
-  document.getElementById('he-k-roi').textContent=roi+'%';
-  document.getElementById('he-margin').textContent=margin+'%';
-  var f=document.getElementById('he-fill');
-  f.style.width=Math.min(margin,100)+'%';
-  f.className='mfill'+(margin<20?' danger':margin<40?' warn':'');
-  var kh='';
-  if(untung>0){kh+='<li><span class="dot g"></span><div>Usaha <strong>layak secara ekonomi</strong> — laba '+rp(untung)+'</div></li>';kh+='<li><span class="dot g"></span><div>ROI <strong>'+roi+'%</strong> — '+(roi>=100?'Sangat menguntungkan':roi>=50?'Hasil baik':'Perlu dioptimalkan')+'</div></li>';if(multi<1)kh+='<li><span class="dot g"></span><div>Sistem organik lebih berkelanjutan jangka panjang</div></li>';if(multi>1)kh+='<li><span class="dot g"></span><div>Sistem intensif meningkatkan potensi pendapatan 15%</div></li>';}
-  else{kh+='<li><span class="dot r"></span><div>Usaha <strong>belum layak</strong> — estimasi rugi '+rp(Math.abs(untung))+'</div></li>';kh+='<li><span class="dot o"></span><div>Kurangi biaya atau cari harga jual lebih tinggi</div></li>';kh+='<li><span class="dot o"></span><div>Pertimbangkan KUR Pertanian atau subsidi pupuk</div></li>';}
-  if(risiko>40)kh+='<li><span class="dot r"></span><div>Risiko hama '+risiko+'% sangat tinggi — investasikan pada PHT</div></li>';
-  document.getElementById('he-simpul').innerHTML=kh;
-  tampil('he-t');
-  setTimeout(function(){tampil('he-k');},100);
-}
-
-/* ── GRAFIK ── */
+/* ── GRAFIK ── *//* ── GRAFIK ── */
 function buatGrafik(){
   var yr=new Date().getFullYear(),lbl=[],ak=[],pr=[],i,qi;
   var hist=[32000,35000,38000,36000,38000,42000,40000,37000,40000,44000,42000,39000];
