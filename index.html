@@ -665,6 +665,10 @@ function doDeteksi(){
 
 /* ── KALENDER ── */
 
+/* ── RIWAYAT ── */
+var RW_KEY = 'smartchili_riwayat';
+var riwayatData = null; // cache hasil AI terakhir untuk disimpan
+
 function getRiwayat(){
   try{ return JSON.parse(localStorage.getItem(RW_KEY)||'[]'); }
   catch(e){ return []; }
