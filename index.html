@@ -150,9 +150,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 </div>
 <div class="tabs">
   <button class="tab on" onclick="goTab('deteksi',0)">&#128269; Deteksi</button>
-  <button class="tab" onclick="goTab('kalender',1)">&#128197; Kalender</button>
-  <button class="tab" onclick="goTab('analisisekonomi',2)">&#128202; Analisis Ekonomi</button>
-  <button class="tab" onclick="goTab('riwayat',3)">&#128203; Riwayat</button>
+  <button class="tab" onclick="goTab('riwayat',1)">&#128203; Riwayat</button>
 </div>
 
 <div class="wrap">
@@ -297,159 +295,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 
 </div><!-- /pg-deteksi -->
 
-<!-- ======== TAB KALENDER ======== -->
-<div id="pg-kalender" class="page">
-  <div class="card">
-    <div class="ct">&#128221; Input Jadwal Tanam</div>
-    <div class="fr">
-      <div class="fg"><label>Tanggal Mulai Tanam</label><input type="date" id="k-tgl"/></div>
-      <div class="fg"><label>Jenis Cabai</label>
-        <select id="k-jenis"><option value="90">Cabai Merah (~90 hr)</option><option value="75">Cabai Rawit (~75 hr)</option><option value="85">Cabai Keriting (~85 hr)</option><option value="100">Cabai Besar (~100 hr)</option></select>
-      </div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Harga Cabai (Rp/kg)</label><input type="number" id="k-harga" value="42000" step="1000" inputmode="numeric"/></div>
-      <div class="fg"><label>Luas Lahan (Ha)</label><input type="number" id="k-luas" value="1" step="0.1" min="0.1" inputmode="decimal"/></div>
-    </div>
-    <button class="btn" onclick="doKalender()">&#128197; Hitung Jadwal</button>
-  </div>
-  <div id="hk" class="hasil">
-    <div class="ct">&#128197; Hasil Jadwal Tanam</div>
-    <div class="rows">
-      <div class="row"><span>Tanggal Mulai Tanam</span><strong id="hk-tgl">-</strong></div>
-      <div class="row"><span>Estimasi Panen</span><strong id="hk-panen">-</strong></div>
-      <div class="row"><span>Lama Tanam</span><strong id="hk-lama">-</strong></div>
-      <div class="row"><span>Sisa Hari</span><strong id="hk-sisa">-</strong></div>
-      <div class="row hl"><span>Harga Jual</span><strong id="hk-harga">-</strong></div>
-      <div class="row hl"><span>Estimasi Produksi</span><strong id="hk-prod">-</strong></div>
-      <div class="row hl"><span>Estimasi Keuntungan</span><strong id="hk-untung">-</strong></div>
-    </div>
-    <div class="tbox">
-      <div class="boxt" style="margin-bottom:8px">&#128204; Tips Musim Tanam</div>
-      <div class="trow">&#128994; Rekomendasi: <strong id="hk-t1">-</strong></div>
-      <div class="trow">&#128994; Risiko Hama: <strong id="hk-t2">-</strong></div>
-      <div class="trow">&#128994; Kondisi: <strong id="hk-t3">-</strong></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="ct">&#128200; Prediksi Harga Cabai 5 Tahun</div>
-    <p class="csub">Berdasarkan tren pasar &amp; inflasi 7% per tahun</p>
-    <canvas id="priceChart" style="width:100%;max-height:220px"></canvas>
-    <div class="cleg">
-      <span><span class="ldot" style="background:#2d7a2d"></span>Historis</span>
-      <span><span class="ldot" style="background:#f5c518;border:2px dashed #c8a000"></span>Prediksi</span>
-    </div>
-    <div style="margin-top:14px;background:#f0f7f0;border-radius:10px;padding:12px 14px;border-left:4px solid #2d7a2d">
-      <div style="font-weight:700;color:#1a4d1a;margin-bottom:8px">&#128214; Cara Membaca Grafik Ini</div>
-      <div style="font-size:13px;color:#2c3e2c;line-height:1.7">
-        <div style="margin-bottom:6px">&#128200; <strong>Sumbu horizontal (bawah)</strong> — menunjukkan periode waktu per kuartal (Q1 = Januari–Maret, Q2 = April–Juni, Q3 = Juli–September, Q4 = Oktober–Desember) dari 2 tahun lalu hingga 5 tahun ke depan.</div>
-        <div style="margin-bottom:6px">&#128176; <strong>Sumbu vertikal (kiri)</strong> — menunjukkan harga cabai dalam satuan ribu rupiah per kg. Contoh: angka "40k" berarti Rp 40.000/kg.</div>
-        <div style="margin-bottom:6px"><span style="color:#2d7a2d;font-weight:700">&#9646; Garis hijau (Historis)</span> — data harga cabai nyata di pasar pada periode lampau. Ini fakta, bukan estimasi.</div>
-        <div style="margin-bottom:6px"><span style="color:#c8a000;font-weight:700">- - Garis kuning putus-putus (Prediksi)</span> — perkiraan harga ke depan berdasarkan tren kenaikan inflasi 7% per tahun dan pola musiman. Ini estimasi, bukan kepastian.</div>
-        <div style="margin-bottom:6px">&#128200; <strong>Grafik naik</strong> — harga cabai diprediksi lebih tinggi dibanding periode sebelumnya (waktu yang baik untuk menjual stok).</div>
-        <div style="margin-bottom:6px">&#128201; <strong>Grafik turun</strong> — harga cabai diprediksi lebih rendah (sebaiknya tunda penjualan atau cari pasar alternatif).</div>
-        <div style="color:#666;font-size:12px;margin-top:4px">&#9888;&#65039; Prediksi ini bersifat indikatif berdasarkan tren historis dan inflasi. Harga aktual bisa berbeda akibat faktor cuaca, kebijakan impor, atau kondisi pasar mendadak.</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- ======== TAB ANALISIS EKONOMI (gabungan) ======== -->
-<div id="pg-analisisekonomi" class="page">
-
-  <div style="background:#1a4d1a;color:#fff;padding:9px 14px;border-radius:10px;margin-bottom:10px;font-weight:700;font-size:14px">&#128176; Analisis Ekonomi Usahatani Cabai</div>
-
-  <div class="card">
-    <div class="ct">&#128221; Input Data Analisis</div>
-
-    <div class="fr">
-      <div class="fg"><label>Produksi (Ton/Ha)</label><input type="number" id="u-prod" value="8" step="0.5" min="1" inputmode="decimal"/></div>
-      <div class="fg"><label>Harga Jual (Rp/kg)</label><input type="number" id="u-harga" value="42000" step="1000" inputmode="numeric"/></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Luas Lahan (Ha)</label><input type="number" id="u-luas" value="1" step="0.1" min="0.1" inputmode="decimal"/></div>
-      <div class="fg"><label>Biaya Produksi/Ha (Rp)</label><input type="number" id="u-biaya" value="50000000" step="1000000" inputmode="numeric"/></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Lokasi / Wilayah</label><input type="text" id="u-lokasi" placeholder="Yogyakarta" autocomplete="off"/></div>
-      <div class="fg"><label>Bulan Tanam</label>
-        <select id="u-bulan"><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
-      </div>
-    </div>
-
-    <div class="fg">
-      <label>Risiko Kerugian Hama: <strong id="u-val">20%</strong></label>
-      <input type="range" id="u-risiko" min="0" max="100" value="20" oninput="document.getElementById('u-val').textContent=this.value+'%'"/>
-      <div class="hint"><span style="color:#2d7a2d">Rendah 0-20%</span><span style="color:#fb8c00">Sedang 21-40%</span><span style="color:#e53935">Tinggi &gt;40%</span></div>
-    </div>
-
-    <div class="fr">
-      <div class="fg"><label>Musim Tanam</label>
-        <select id="u-musim">
-          <option value="hujan">Musim Hujan (Oktober - Maret)</option>
-          <option value="kering">Musim Kering (April - September)</option>
-        </select>
-      </div>
-      <div class="fg"><label>Sistem Pertanian</label>
-        <select id="u-sistem">
-          <option value="1.00">Konvensional (standar)</option>
-          <option value="0.85">Organik / Ramah Lingkungan</option>
-          <option value="1.15">Intensif / Teknologi Modern</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="btn" onclick="doAnalisisGabung()">&#128202; Hitung Analisis Ekonomi</button>
-  </div>
-
-  <div id="hu" class="hasil">
-    <div class="rows" style="margin-bottom:12px">
-      <div class="row"><span>Lokasi</span><strong id="hu-lokasi">-</strong></div>
-      <div class="row"><span>Periode Tanam</span><strong id="hu-bulan">-</strong></div>
-      <div class="row"><span>Estimasi Panen</span><strong id="hu-panen">-</strong></div>
-      <div class="row"><span>Sistem Pertanian</span><strong id="hu-sistem">-</strong></div>
-      <div class="row"><span>Musim Tanam</span><strong id="hu-musim">-</strong></div>
-      <div class="row"><span>Risiko Serangan</span><strong id="hu-risiko">-</strong></div>
-    </div>
-
-    <div class="g4">
-      <div class="g4i"><small>Total Produksi</small><strong id="hu-prod">-</strong></div>
-      <div class="g4i"><small>Harga / kg</small><strong id="hu-harga">-</strong></div>
-      <div class="g4i"><small>Total Pendapatan</small><strong id="hu-pend">-</strong></div>
-      <div class="g4i"><small>Total Biaya</small><strong id="hu-tbiaya">-</strong></div>
-    </div>
-
-    <div class="rkbox">
-      <div class="boxt">Analisis Ringkas</div>
-      <div class="rkrow"><span>Pendapatan Kotor</span><strong id="hu-r-pend">-</strong></div>
-      <div class="rkrow minus"><span>(-) Biaya Produksi</span><strong id="hu-r-biaya">-</strong></div>
-      <div class="rkrow minus"><span>(-) Kerugian Hama</span><strong id="hu-r-rugi">-</strong></div>
-      <div class="rkrow total"><span>Keuntungan Bersih</span><strong id="hu-r-untung">-</strong></div>
-      <div class="rkrow"><span>ROI</span><strong id="hu-r-roi">-</strong></div>
-    </div>
-
-    <div class="mbox">
-      <div class="mhdr"><span>Margin Keuntungan</span><strong id="hu-margin">0%</strong></div>
-      <div class="mtrack"><div class="mfill" id="hu-fill" style="width:0%"></div></div>
-    </div>
-
-    <div class="rbox" style="margin-top:11px">
-      <div class="boxt">&#128204; Rekomendasi &amp; Kesimpulan Ekonomi</div>
-      <ul id="hu-rekom"></ul>
-    </div>
-
-    <button class="sbtn" id="hu-btn" style="background:#1a4d1a">-</button>
-  </div>
-
-</div>
 
 </div><!-- /wrap -->
 
 <nav class="bnav">
   <button class="bn on" onclick="goTab('deteksi',0)">&#127807;<br/><small>Deteksi</small></button>
-  <button class="bn" onclick="goTab('kalender',1)">&#128197;<br/><small>Kalender</small></button>
-  <button class="bn" onclick="goTab('analisisekonomi',2)">&#128202;<br/><small>Analisis Ekonomi</small></button>
-  <button class="bn" onclick="goTab('riwayat',3)">&#128203;<br/><small>Riwayat</small></button>
+  <button class="bn" onclick="goTab('riwayat',1)">&#128203;<br/><small>Riwayat</small></button>
 </nav>
 
 <!-- ======== TAB RIWAYAT ======== -->
@@ -462,16 +314,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
   <div id="rw-list"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 var BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-var RHAMA=[15,20,25,30,35,40,35,25,20,15,15,10];
-var chartObj=null, fotoB64=null, fotoMime='image/jpeg';
+var fotoB64=null, fotoMime='image/jpeg';
 /* ── INIT ── */
 window.addEventListener('load',function(){
-  document.getElementById('k-tgl').value=new Date().toISOString().split('T')[0];
-  if(typeof Chart!=='undefined') buatGrafik();
-  else setTimeout(function(){if(typeof Chart!=='undefined') buatGrafik();},1500);
 });
 
 /* ── PROXY URL (key tersimpan aman di server, bukan di sini) ── */
@@ -817,130 +664,6 @@ function doDeteksi(){
 }
 
 /* ── KALENDER ── */
-function doKalender(){
-  var tv=document.getElementById('k-tgl').value;
-  if(!tv){alert('Isi tanggal mulai tanam!');return;}
-  var hari=parseInt(document.getElementById('k-jenis').value);
-  var harga=parseFloat(document.getElementById('k-harga').value)||42000;
-  var luas=parseFloat(document.getElementById('k-luas').value)||1;
-  var tT=new Date(tv+'T00:00:00'),tP=new Date(tv+'T00:00:00');
-  tP.setDate(tP.getDate()+hari);
-  var sisa=Math.ceil((tP-new Date())/86400000);
-  var opt={day:'numeric',month:'long',year:'numeric'};
-  var b=tT.getMonth(),kg=8000*luas,pend=kg*harga,biaya=50000000*luas;
-  document.getElementById('hk-tgl').textContent=tT.toLocaleDateString('id-ID',opt);
-  document.getElementById('hk-panen').textContent=tP.toLocaleDateString('id-ID',opt);
-  document.getElementById('hk-lama').textContent=hari+' hari';
-  document.getElementById('hk-sisa').textContent=sisa>0?sisa+' hari lagi':'Sudah melewati estimasi panen';
-  document.getElementById('hk-harga').textContent=rp(harga)+' / kg';
-  document.getElementById('hk-prod').textContent=kg.toLocaleString('id-ID')+' kg';
-  document.getElementById('hk-untung').textContent=rp(pend-biaya);
-  document.getElementById('hk-t1').textContent=BLN[b]+' - '+BLN[(b+3)%12];
-  document.getElementById('hk-t2').textContent=RHAMA[b]<=20?'Rendah ('+RHAMA[b]+'%)':RHAMA[b]<=35?'Sedang ('+RHAMA[b]+'%)':'Tinggi ('+RHAMA[b]+'%)';
-  document.getElementById('hk-t3').textContent=(b>=9||b<=2)?'Musim Hujan - perhatikan drainase':'Musim Kering - pastikan irigasi cukup';
-  if(typeof Chart!=='undefined') buatGrafik(harga);
-  tampil('hk');
-}
-
-/* ── ANALISIS EKONOMI GABUNGAN ── */
-function doAnalisisGabung(){
-  var prod   = parseFloat(document.getElementById('u-prod').value)   || 8;
-  var harga  = parseFloat(document.getElementById('u-harga').value)  || 42000;
-  var luas   = parseFloat(document.getElementById('u-luas').value)   || 1;
-  var biayaH = parseFloat(document.getElementById('u-biaya').value)  || 50000000;
-  var risiko = parseInt(document.getElementById('u-risiko').value)    || 20;
-  var musim  = document.getElementById('u-musim').value;
-  var lokasi = document.getElementById('u-lokasi').value || '-';
-  var bulan  = document.getElementById('u-bulan').value;
-  var sel    = document.getElementById('u-sistem');
-  var multi  = parseFloat(sel.value) || 1.00;
-  var sis    = sel.options[sel.selectedIndex].text.split('(')[0].trim();
-
-  var bi   = BLN.indexOf(bulan);
-  var pBln = BLN[(bi + 3) % 12];
-
-  var kg     = luas * prod * 1000;
-  var pend   = kg * harga;
-  var tbiy   = biayaH * luas;
-  var rugi   = pend * (risiko / 100);
-  var untung = (pend - tbiy - rugi) * multi;
-  var margin = pend > 0 ? Math.max(0, Math.round((untung / pend) * 100)) : 0;
-  var roi    = tbiy > 0 ? Math.round((untung / tbiy) * 100) : 0;
-
-  document.getElementById('hu-lokasi').textContent = lokasi;
-  document.getElementById('hu-bulan').textContent  = bulan;
-  document.getElementById('hu-panen').textContent  = pBln;
-  document.getElementById('hu-sistem').textContent = sis;
-  document.getElementById('hu-musim').textContent  = musim === 'hujan' ? 'Musim Hujan' : 'Musim Kering';
-  var rEl = document.getElementById('hu-risiko');
-  rEl.textContent = risiko + '% (' + (risiko <= 20 ? 'Rendah' : risiko <= 40 ? 'Sedang' : 'Tinggi') + ')';
-  rEl.className   = risiko <= 20 ? 'gt' : risiko <= 40 ? 'ot' : 'rt';
-
-  document.getElementById('hu-prod').textContent    = kg.toLocaleString('id-ID') + ' kg';
-  document.getElementById('hu-harga').textContent   = rp(harga);
-  document.getElementById('hu-pend').textContent    = rp(pend);
-  document.getElementById('hu-tbiaya').textContent  = rp(tbiy);
-
-  document.getElementById('hu-r-pend').textContent  = rp(pend);
-  document.getElementById('hu-r-biaya').textContent = rp(tbiy);
-  document.getElementById('hu-r-rugi').textContent  = rp(rugi);
-  document.getElementById('hu-r-untung').textContent= rp(untung);
-  document.getElementById('hu-r-roi').textContent   = roi + '%';
-
-  document.getElementById('hu-margin').textContent  = margin + '%';
-  var f = document.getElementById('hu-fill');
-  f.style.width = Math.min(margin, 100) + '%';
-  f.className   = 'mfill' + (margin < 20 ? ' danger' : margin < 40 ? ' warn' : '');
-
-  var rh = '';
-  if (untung > 0) {
-    rh += '<li><span class="dot g"></span><div>Usaha tani <strong>menguntungkan</strong> — laba ' + rp(untung) + '</div></li>';
-    rh += '<li><span class="dot g"></span><div>ROI <strong>' + roi + '%</strong> — ' + (roi >= 100 ? 'Modal kembali dalam 1 musim tanam' : roi >= 50 ? 'Hasil cukup baik' : 'Perlu efisiensi biaya') + '</div></li>';
-    if (multi < 1) rh += '<li><span class="dot g"></span><div>Sistem organik lebih berkelanjutan jangka panjang meski hasil 15% lebih rendah</div></li>';
-    if (multi > 1) rh += '<li><span class="dot g"></span><div>Sistem intensif meningkatkan potensi pendapatan sebesar 15%</div></li>';
-  } else {
-    rh += '<li><span class="dot r"></span><div>Estimasi <strong>rugi ' + rp(Math.abs(untung)) + '</strong> — tinjau kembali biaya dan harga jual</div></li>';
-    rh += '<li><span class="dot o"></span><div>Kurangi biaya produksi atau cari harga jual lebih tinggi</div></li>';
-    rh += '<li><span class="dot o"></span><div>Pertimbangkan KUR Pertanian atau subsidi pupuk bersubsidi</div></li>';
-  }
-  if (risiko > 40) rh += '<li><span class="dot r"></span><div>Risiko hama ' + risiko + '% sangat tinggi — investasikan pada Pengendalian Hama Terpadu (PHT)</div></li>';
-  rh += '<li><span class="dot g"></span><div>Musim tanam: <strong>' + (musim === 'hujan' ? 'Hujan — waspadai penyakit jamur dan layu bakteri' : 'Kering — pastikan ketersediaan air irigasi cukup') + '</strong></div></li>';
-  rh += '<li><span class="dot g"></span><div>Estimasi panen sekitar bulan <strong>' + pBln + '</strong> di lokasi ' + lokasi + '</div></li>';
-
-  document.getElementById('hu-rekom').innerHTML = rh;
-
-  var btn = document.getElementById('hu-btn');
-  if (untung > 0) {
-    btn.innerHTML      = '&#9989; Layak! Laba ' + rp(untung) + ' — ROI ' + roi + '%';
-    btn.style.background = '#1a4d1a';
-  } else {
-    btn.innerHTML      = '&#9888;&#65039; Estimasi Rugi ' + rp(Math.abs(untung)) + ' — Perlu Evaluasi';
-    btn.style.background = '#b71c1c';
-  }
-  tampil('hu');
-}
-
-/* ── GRAFIK ── *//* ── GRAFIK ── */
-function buatGrafik(hargaBase){
-  var base=parseFloat(hargaBase)>0?parseFloat(hargaBase):42000;
-  var yr=new Date().getFullYear(),lbl=[],ak=[],pr=[],i,qi;
-  var hist=[32000,35000,38000,36000,38000,42000,40000,37000,40000,44000,42000,39000];
-  var kw=['Q1','Q2','Q3','Q4'],vm=[1.05,1.00,0.88,0.95];
-  for(i=yr-2;i<=yr;i++)for(qi=0;qi<4;qi++)lbl.push(kw[qi]+' '+i);
-  for(i=0;i<hist.length;i++){ak.push(hist[i]);pr.push(null);}
-  pr[pr.length-1]=hist[hist.length-1];
-  for(i=1;i<=5;i++)for(qi=0;qi<4;qi++){lbl.push(kw[qi]+' '+(yr+i));ak.push(null);pr.push(Math.round(base*Math.pow(1.07,i)*vm[qi]));}
-  var ctx=document.getElementById('priceChart').getContext('2d');
-  if(chartObj)chartObj.destroy();
-  chartObj=new Chart(ctx,{type:'line',data:{labels:lbl,datasets:[
-    {label:'Historis',data:ak,borderColor:'#2d7a2d',backgroundColor:'rgba(45,122,45,0.08)',borderWidth:2,pointRadius:2,tension:0.4,fill:true,spanGaps:false},
-    {label:'Prediksi',data:pr,borderColor:'#f5c518',borderDash:[5,4],borderWidth:2,pointRadius:2,tension:0.4,fill:false,spanGaps:false}
-  ]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+(c.raw?'Rp '+c.raw.toLocaleString('id-ID'):'-');}}}},scales:{y:{min:25000,ticks:{callback:function(v){return(v/1000)+'k';},font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'}},x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false}}}}});
-}
-
-/* ── RIWAYAT ── */
-var RW_KEY = 'smartchili_riwayat';
-var riwayatData = null; // cache hasil AI terakhir untuk disimpan
 
 function getRiwayat(){
   try{ return JSON.parse(localStorage.getItem(RW_KEY)||'[]'); }
