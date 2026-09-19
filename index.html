@@ -399,8 +399,10 @@ function analisisFoto(){
 
   var prompt='Kamu adalah ahli patologi tanaman cabai Indonesia yang berpengalaman.\n\n'
     +(info?'Informasi dari petani: '+info+'\n\n':'')
+    +'PENTING: Apabila tanaman pada foto tampak sehat dan tidak memperlihatkan gejala serangan hama maupun penyakit, isi NAMA dengan persis "Tanaman Sehat" dan TINGKAT dengan 0. Jangan memaksakan diagnosis penyakit pada tanaman yang sehat.\n\n'
+    +'CATATAN PEMBEDA: Daun menguning dapat disebabkan infeksi virus maupun kekurangan unsur hara. Apabila gejala menguning disertai daun mengeriting, menggulung, atau kerdil, diagnosis yang tepat adalah Virus Kuning (Begomovirus), bukan klorosis atau defisiensi hara.\n\n'
     +'Analisis foto ini dan jawab dalam format PERSIS berikut:\n\n'
-    +'TINGKAT: [angka 0-100]\n'
+    +'TINGKAT: [angka 0-100, isi 0 apabila tanaman sehat]\n'
     +'STATUS: [AMAN atau WASPADA atau KRITIS]\n\n'
     +'===PENYAKIT1===\n'
     +'NAMA: [nama penyakit/hama]\n'
